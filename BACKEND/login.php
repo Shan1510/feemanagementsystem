@@ -23,13 +23,13 @@ if($data)
         
             if($_SESSION['type'] == 'admin')
             {
-               header('location:../FRONTEND/admindashboard.php');
+               header('location:admindashboard.php');
                exit;
             }
 
        else
     {
-        header('location:../FRONTEND/userdashboard.php');
+        header('location:userdashboard.php');
         exit;
     }
      }

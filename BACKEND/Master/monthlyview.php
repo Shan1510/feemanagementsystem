@@ -1,7 +1,5 @@
 <?php
-
-
-include __DIR__ . '/../Master/conection.php';
+include 'conection.php';
 
 $month = $_POST['month'];
 $year = $_POST['year'];

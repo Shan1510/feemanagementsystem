@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/Master/conection.php';
+include 'Master/conection.php';
 
      $classname=$_POST['class_name'];
      $classsec=$_POST['class_sec'];

@@ -1,6 +1,6 @@
 
 <?php
-include __DIR__ . '/../Master/conection.php';
+include 'conection.php';
 ?>
 
 
@@ -18,12 +18,13 @@ include __DIR__ . '/../Master/conection.php';
         <div class="logo">
             <h2>Admin Dashboard</h2>
         </div>
-        <ul class="nav-links">
-    <li><a href="../fees/addyear.php">Fee monthly</a></li>
-    <li><a href="../../FRONTEND/addstudents.html">Add Student</a></li>
-    <li><a href="../../FRONTEND/addclass.html">Add Class</a></li>
-    <li><a href="../totalbutton.php">Student</a></li>
+       <ul class="nav-links">
+    <li><a href="addyear.php">Fee monthly</a></li>
+    <li><a href="../FRONTEND/addstudents.html">Add Student</a></li>
+    <li><a href="../FRONTEND/addclass.html">Add Class</a></li>
+    <li><a href="totalbutton.php">Student</a></li>
 </ul>
+
 
             <!-- Fixed Classes submenu -->
             <li class="has-submenu">

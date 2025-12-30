@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../Master/conection.php';
+include 'conection.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +38,7 @@ include __DIR__ . '/../Master/conection.php';
         <select name="class_id" id="class" required>
             <option value="" disabled selected>Select Class</option>
             <?php
-            include '../BACKEND/conection.php';
+            include 'conection.php';
             $res = $conn->query("SELECT * FROM class");
             while($row = $res->fetch_assoc()){
                 echo "<option value='{$row['id']}'>{$row['class_name']}</option>";

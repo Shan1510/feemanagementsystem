@@ -1,6 +1,6 @@
  <?php
- 
-include '../conection.php';
+include 'conection.php';
+
 
 $sql = "
 SELECT student.id,

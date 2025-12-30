@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/Master/conection.php';
+include 'Master/conection.php';
 
 $DAS=$_POST['DAS'];
 $Studentname=$_POST['Studentname'];

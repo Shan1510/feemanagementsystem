@@ -1,6 +1,6 @@
 <?php
-include __DIR__ . '/Master/conection.php';
-include __DIR__ . '/sidebar/adminsidebar.php';
+include 'Master/conection.php';
+include 'Master/adminsidebar.php';
 ?>
 
 
@@ -26,9 +26,9 @@ include __DIR__ . '/sidebar/adminsidebar.php';
          -->
     </form>
 
-    <div class="sidebar">
+    <!-- <div class="sidebar">
         <a href="addstudents.html">New student</a>
-        <a href="classes.html">Classes</a>
+        <a href="classes.html">Classes</a> -->
         
     </div>
 </body>

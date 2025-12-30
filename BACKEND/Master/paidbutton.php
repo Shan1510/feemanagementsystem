@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/../Master/conection.php';
+include 'conection.php';
 
 $sql= "SELECT COUNT(DISTINCT student.id) AS total_paid
 FROM student
