@@ -1,0 +1,28 @@
+body{
+
+    background-color: rgb(230, 233, 206);
+
+}
+
+h1{
+
+    margin-left: 50%;
+
+
+}
+
+form{
+
+    margin-left: 50%;
+
+}
+.sidebar{
+
+    background-color: aqua;
+
+    width: 20vw;
+    height: 100vh;
+    
+
+
+}

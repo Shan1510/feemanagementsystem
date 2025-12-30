@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="signup.css" rel="stylesheet">
+</head>
+<body>
+
+
+    
+    
+    <div class="outerbox">
+        <!-- <img  src="../images/logo100x295.png" alt="SCHOOL LOGO " />  -->
+        <div class="inerbox">
+            <header class="signup"> <h1>Sign Up</h1></header>
+            <main>  <form action="../BACKEND/signup.php" method="post" id="form">
+            
+            <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <br><br>
+            <label for="Email">Email</label>
+            <input type="text" id="Email" name="Email" placeholder="Enter your Email" required>
+            <br><br>
+            <label for="Phonenumber">Phone number</label>
+            <input type="text" id="Phonenumber" name="Phonenumber" placeholder="Enter your Phone number" required>
+            <br><br>
+            <label for="Password">Password</label>
+            <input type="password" id="Password" name="Password" placeholder=" Enter your Password" required>
+            <br><br>
+            <label for="ConfirmPassword">Confirm Password</label>
+            <input type="password" id="ConfirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>    
+            <br><br>
+            <label for="type">Who you are?</label>
+            <br>
+            <label for="type">Admin</label>
+             <input type="radio" id="admin" name="type"  value="admin" required>
+
+                         <label for="type">user</label>
+             <input type="radio" id="user" name="type" value="user" required>
+
+        <input type="submit" value="Sign Up">
+            <br>
+
+            </main>
+</div>
+
+        
+        </div>
+
+        
+
+
+
+
+
+
+    </form>  </div>
+<!-- 
+    <script src="signup.js"></script> -->
+
+</body>
+</html>
