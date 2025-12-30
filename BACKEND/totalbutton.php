@@ -1,10 +1,16 @@
 <?php
-include 'conection.php';
 
-$sql="SELECT student.*, COALESCE(fees.status,'unpaid') AS status
+include 'Master/conection.php';
+
+
+$sql="SELECT 
+    student.*,
+    COALESCE(student_fee.status, 'unpaid') AS status
 FROM student
-LEFT JOIN fees ON student.id = fees.student_id
-WHERE fees.status = 'unpaid' OR fees.status IS NULL";
+LEFT JOIN student_fee 
+    ON student.id = student_fee.student_id;
+";
+
 
 $result=mysqli_query($conn,$sql);
 
@@ -28,7 +34,7 @@ $result=mysqli_query($conn,$sql);
             <th>Contact Number</th>
             <th>T_Fee</th>
             <th>Status</th>
-            
+            <th>Action</th>
         </tr>
     </thead>
 
@@ -48,24 +54,23 @@ $result=mysqli_query($conn,$sql);
 
             // STATUS COLUMN
             
-            // echo "<td>
-            //         <label>
-            //             <input type='radio' name='status_{$row['id']}' value='paid'> Paid
-            //         </label>
-            //         <label>
-            //             <input type='radio' name='status_{$row['id']}' value='unpaid'> Not Paid
-            //         </label>
-            //       </td>";
+            echo "<td>
+                    <label>
+                        <input type='radio' name='status_{$row['id']}' value='paid'> Paid
+                    </label>
+                    <label>
+                        <input type='radio' name='status_{$row['id']}' value='unpaid'> Not Paid
+                    </label>
+                  </td>";
                   
 
-        //     // ACTION COLUMN
-        //     echo "<td>
-        //             <a href='edit.php?id={$row['id']}'>Edit</a> |
-        //             <a href='delete.php?id={$row['id']}'>Delete</a>
-        //           </td>";
+            // ACTION COLUMN
+            echo "<td>
+                    <a href='edit.php?id={$row['id']}'>Edit</a> |
+                    <a href='delete.php?id={$row['id']}'>Delete</a>
+                  </td>";
 
-        //     echo "</tr>";
-        // }
+            echo "</tr>";
         }
     } else {
         echo "<tr><td colspan='10'>No students found</td></tr>";

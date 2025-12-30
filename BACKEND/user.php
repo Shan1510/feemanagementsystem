@@ -3,7 +3,7 @@ include 'Master/conection.php';
 
 $sql=" SELECT  username,email,phonenumber, Password, type
 FROM signup
-WHERE type = 'user'";
+WHERE type = 'user' or type = 'admin' or type = ' '";
 
 
 $result=mysqli_query($conn,$sql);

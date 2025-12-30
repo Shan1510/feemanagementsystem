@@ -8,6 +8,6 @@
 
 </head>
 <body>
-    <button onclick="window.location.href='Master/totalbutton.php'"> Total students <br> <?php include 'Master/totalstudents.php'; ?>  </button>
+    <button onclick="window.location.href='totalbutton.php'"> Total students <br> <?php include 'totalstudents.php'; ?>  </button>
 </body>
 </html>

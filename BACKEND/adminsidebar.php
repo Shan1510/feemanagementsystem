@@ -1,6 +1,8 @@
 
 <?php
-include 'conection.php';
+include 'Master/conection.php';
+
+
 ?>
 
 
@@ -34,7 +36,7 @@ include 'conection.php';
                     $result = mysqli_query($conn, "SELECT id, class_name FROM class ORDER BY class_name ASC");
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo '<li>
-                                <a href="students_of_class.php?class_id=' . $row['id'] . '">'
+                                <a href="classcopyhtml.php?class_id=' . $row['id'] . '">'
                                 . htmlspecialchars($row['class_name']) .
                               '</a>
                               </li>';
@@ -43,7 +45,7 @@ include 'conection.php';
                 </ul>
             </li>
 
-            <li><a href="../../user.php">Users</a></li>
+            <li><a href="user.php">Users</a></li>
         </ul>
     </div>
 

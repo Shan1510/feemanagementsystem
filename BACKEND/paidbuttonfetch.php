@@ -1,5 +1,5 @@
 <?php
-include 'conection.php';
+include 'Master/conection.php';
 
 include 'fetchtablecode.php';
 

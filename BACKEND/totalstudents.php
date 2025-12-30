@@ -1,6 +1,6 @@
 <?php
 
-include 'conection.php';
+include 'Master/conection.php';
 $sql="SELECT COUNT(*) AS total FROM student";
 
 $result=mysqli_query($conn,$sql);

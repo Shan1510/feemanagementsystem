@@ -1,5 +1,7 @@
+<?php
 
-
+include 'Master/conection.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +27,7 @@
     </thead>
 
     <tbody>
- <?php include 'Master/fetchclass.php'; ?>
+ <?php include 'fetchclass.php'; ?>
     </tbody>
     
 </table>
