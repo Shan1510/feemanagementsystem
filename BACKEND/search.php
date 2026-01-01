@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 $DAS=$_POST['DAS'];
 
 $conn=new mysqli('localhost','root','','feemanagement');

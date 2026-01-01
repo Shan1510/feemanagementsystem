@@ -42,14 +42,16 @@ if (!preg_match($passregex, $pass)) {
         if ($conn->connect_error) {
     die("Database connection failed");
 }
-        $query= ("INSERT INTO signup (username,email,Phonenumber,type,Password) VALUES ('$u_name','$Email','$p_number','$type','$password')");
+        $query= ("INSERT INTO signup (username,email,Phonenumber,Password) VALUES ('$u_name','$Email','$p_number','$password')");
         
         
         
         
         try {
     $result=mysqli_query($conn, $query);
-   
+   // Redirect to login page if successful
+    header("Location: ../FRONTEND/login.html");
+    exit;
     }
 catch (mysqli_sql_exception $error) {
     if ($error->getCode() == 1062) { // Duplicate entry error code

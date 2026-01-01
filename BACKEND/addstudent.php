@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'Master/conection.php';
 
 $DAS=$_POST['DAS'];

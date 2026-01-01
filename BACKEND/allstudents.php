@@ -1,16 +1,15 @@
 <?php
-
+session_start();
 include 'Master/conection.php';
-// include 'edit.php';
-// include 'delete.php';
 
-$sql="SELECT 
+
+$sql= "SELECT 
     student.*,
-    COALESCE(student_fee.status, 'unpaid') AS status
+    class.class_name,
+    class.class_sec
 FROM student
-LEFT JOIN student_fee 
-    ON student.id = student_fee.student_id;
-";
+LEFT JOIN class ON student.class_id = class.id
+WHERE student.is_deleted = 0";
 
 
 $result=mysqli_query($conn,$sql);
@@ -22,7 +21,7 @@ $result=mysqli_query($conn,$sql);
 <head>
     <meta charset="UTF-8">
     <title>Student Table</title>
-    <link rel="stylesheet" href="allstudents.css">
+    <link href="allstudents.css" rel= "stylesheet">
 </head>
 <body>
 <form action="savestatus.php" method="post" name="submit">
@@ -35,8 +34,9 @@ $result=mysqli_query($conn,$sql);
             <th>Father Name</th>
             <th>Contact Number</th>
             <th>T_Fee</th>
-            <th>Status</th>
-            <!-- <th>Action</th> -->
+            <th>Class</th>
+            <th>Section</th>
+            <th>Action</th>
         </tr>
     </thead>
 
@@ -52,27 +52,24 @@ $result=mysqli_query($conn,$sql);
             echo "<td>{$row['father_name']}</td>";
             echo "<td>{$row['contact_number']}</td>";
             echo "<td>{$row['T_Fee']}</td>";
-            echo "<td>{$row['status']}</td>";
+            echo "<td>{$row['class_name']}</td>";
+            echo "<td>{$row['class_sec']}</td>";
 
             // STATUS COLUMN
             
-            // echo "<td>
-            //         <label>
-            //             <input type='radio' name='status_{$row['id']}' value='paid'> Paid
-            //         </label>
-            //         <label>
-            //             <input type='radio' name='status_{$row['id']}' value='unpaid'> Not Paid
-            //         </label>
-            //       </td>";
+            
                   
 
-            // ACTION COLUMN
-            // echo "<td>
-            //         <a href='edit.php?id={$row['id']}'>Edit</a> |
-            //         <a href='delete.php?id={$row['id']}'>Delete</a>
-            //       </td>";
+          // ACTION COLUMN
+echo "<td>
+        <a href='edit.php?id={$row['id']}'>Edit</a> |
+        <a href='delete.php?id={$row['id']}' 
+           onclick=\"return confirm('Are you sure you want to delete?')\">
+           Delete
+        </a>
+      </td>";
 
-            // echo "</tr>";
+echo "</tr>";
         }
     } else {
         echo "<tr><td colspan='10'>No students found</td></tr>";

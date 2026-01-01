@@ -1,7 +1,8 @@
 <?php
+
 include __DIR__ . '/Master/conection.php';
-include __DIR__ . '/Master/admin_auth.php';
-include __DIR__ .'/adminsidebar.php';
+include __DIR__ . '/Master/user_auth.php';
+include __DIR__ .'/usersidebar.php';
 
 
 
@@ -25,7 +26,7 @@ include __DIR__ .'/adminsidebar.php';
         
             <main class="main-content">
     <div class="dashboard-container">
-            <h1>Welcome, Admin!</h1>
+            <h1>Welcome, User!</h1>
             <p>Fee Management System Dashboard</p>
             
             <div class="stats-grid">

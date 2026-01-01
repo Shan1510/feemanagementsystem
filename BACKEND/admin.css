@@ -1,0 +1,212 @@
+/* ================= RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f1f5f9;
+    min-height: 100vh;
+    color: #334155;
+    overflow-x: hidden;
+}
+
+/* ================= MAIN CONTENT ================= */
+.main-content {
+    margin-left: 70px;              
+    min-height: 100vh;
+    background: #f8fafc;
+
+    display: flex;
+    justify-content: center;         /* CENTER CONTENT */
+    padding: 30px 180px;
+}
+
+/* CENTER WRAPPER */
+.dashboard-container {
+    width: 100%;
+    max-width: 1100px;
+}
+
+/* ================= HEADER ================= */
+.main-content h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+
+.main-content > .dashboard-container > p {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+/* ================= STATS GRID ================= */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+/* ================= STAT CARDS ================= */
+.stat-card {
+    background: #ffffff;
+    padding: 22px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    border-top: 4px solid #3b82f6;
+    transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+
+.stat-card h3 {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.stat-value {
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+.stat-card.paid {
+    border-top-color: #22c55e;
+}
+.stat-card.paid .stat-value {
+    color: #22c55e;
+}
+
+.stat-card.pending {
+    border-top-color: #ef4444;
+}
+.stat-card.pending .stat-value {
+    color: #ef4444;
+}
+
+/* ================= SEARCH CARD ================= */
+.card {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+.card h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ================= FORM ================= */
+.card form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-control {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.95rem;
+    transition: 0.25s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* ================= BUTTON ================= */
+.btn {
+    margin-top: 6px;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    transition: 0.25s;
+    text-decoration: none;
+}
+/* REMOVE UNDERLINE FROM ALL LINKS */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* SPECIFICALLY FOR STAT CARD LINKS */
+.stat-card-link {
+    text-decoration: none;
+    display: block;
+}
+
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99,102,241,0.4);
+}
+
+/* ================= ANIMATION ================= */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card,
+.card {
+    animation: fadeUp 0.4s ease forwards;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 992px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .dashboard-container {
+        max-width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

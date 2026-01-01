@@ -2,13 +2,13 @@
 
 include 'Master/conection.php';
 
-$sql= "SELECT COUNT(DISTINCT student.id) AS total_unpaid
-FROM student
-LEFT JOIN fees ON student.id = fees.student_id
-WHERE fees.status = 'unpaid' OR fees.status IS NULL
-";
+$sql= "SELECT COUNT(*) AS total_unpaid
+        FROM student
+        LEFT JOIN student_fee ON student.id = student_fee.student_id
+        WHERE student_fee.status = 'unpaid' OR student_fee.id IS NULL ";
 
 $result=mysqli_query($conn,$sql);
 $data=mysqli_fetch_assoc($result);
 
-echo $data['total_unpaid'];
+ echo $data['total_unpaid'] ;
+ ?>

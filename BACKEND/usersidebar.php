@@ -1,6 +1,8 @@
 <?php
+
 include __DIR__ . '/Master/conection.php';
-include __DIR__ . '/Master/admin_auth.php';
+include __DIR__ . '/Master/user_auth.php';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -37,14 +39,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <a href="select_class.php">📅 Monthly Fees</a>
                 <a href="../FRONTEND/addstudents.html">👨‍🎓 Add Student</a>
                 <a href="../FRONTEND/addclass.html">🏫 Add Class</a>
-                <a href="allstudents.php">📊 All Students</a>
-                <a href="user.php">👥 Users</a>
+                <a href="allstudentsuser.php">📊 All Students</a>
+                <!-- <a href="user.php">👥 Users</a> -->
                 
                 <!-- Logout - Goes to login page -->
-               <form action="master/logout.php" method="post">
-    <button type="submit">Logout</button>
-</form>
-
+                <a href="../FRONTEND/login.html" class="logout-link">
+                    🚪 Logout (<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin'; ?>)
+                </a>
+            </nav>
         </div>
         
         <!-- Main Content

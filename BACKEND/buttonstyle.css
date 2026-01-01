@@ -1,0 +1,74 @@
+/* stats-card.css - Styles for stat cards */
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 200px;
+    flex: 1;
+    margin: 10px;
+    border-top: 5px solid #2563eb;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card h4 {
+    color: #6b7280;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1;
+    margin: 15px 0;
+}
+
+/* Specific colors for each card type */
+.stat-total {
+    border-top-color: #2563eb; /* Blue */
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.stat-paid {
+    border-top-color: #10b981; /* Green */
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.stat-pending {
+    border-top-color: #f59e0b; /* Orange */
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+/* Icon styles */
+.stat-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.stat-total .stat-icon { color: #2563eb; }
+.stat-paid .stat-icon { color: #10b981; }
+.stat-pending .stat-icon { color: #f59e0b; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stat-card {
+        margin: 5px;
+        min-width: 150px;
+    }
+    
+    .stat-value {
+        font-size: 28px;
+    }
+}

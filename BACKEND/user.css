@@ -1,0 +1,397 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    min-height: 100vh;
+}
+
+.container {
+    margin-left: 250px; /* Offset for sidebar */
+    padding: 40px 50px;
+    background: #f5f7fa;
+}
+
+h2 {
+    color: #2d3748;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 35px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.table-responsive {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    table-layout: fixed;
+}
+
+table thead tr {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+table th {
+    padding: 16px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: rgb(3, 3, 3);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+    border: none;
+}
+
+table th:first-child {
+    border-top-left-radius: 16px;
+    padding-left: 20px;
+}
+
+table th:last-child {
+    border-top-right-radius: 16px;
+    padding-right: 20px;
+}
+
+table tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: all 0.25s ease;
+}
+
+table tbody tr:last-child {
+    border-bottom: none;
+}
+
+table tbody tr:hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.04), rgba(118, 75, 162, 0.04));
+    transform: scale(1.001);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+table td {
+    padding: 16px 8px;
+    text-align: left;
+    color: #4a5568;
+    font-size: 13px;
+    border: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+table td:first-child {
+    padding-left: 20px;
+}
+
+table td:last-child {
+    padding-right: 20px;
+}
+
+/* Column widths - fixed to fit screen */
+table th:nth-child(1),
+table td:nth-child(1) {
+    width: 10%; /* Username */
+}
+
+table th:nth-child(2),
+table td:nth-child(2) {
+    width: 22%; /* Email */
+}
+
+table th:nth-child(3),
+table td:nth-child(3) {
+    width: 11%; /* Contact */
+}
+
+table th:nth-child(4),
+table td:nth-child(4) {
+    width: 48%; /* Password - largest for hash */
+}
+
+table th:nth-child(5),
+table td:nth-child(5) {
+    width: 9%; /* Type */
+}
+
+/* Username column styling */
+table td:nth-child(1) {
+    font-weight: 600;
+    color: #5a67d8;
+}
+
+/* Email column styling */
+table td:nth-child(2) {
+    color: #2d3748;
+}
+
+/* Contact column styling */
+table td:nth-child(3) {
+    font-family: 'Courier New', monospace;
+    color: #718096;
+    font-size: 13px;
+}
+
+/* Password column styling */
+table td:nth-child(4) {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #a0aec0;
+    letter-spacing: 0.3px;
+    word-break: break-all;
+}
+
+/* Type column styling */
+table td:nth-child(5) {
+    font-weight: 600;
+    text-transform: capitalize;
+    font-size: 13px;
+}
+
+/* Admin badge styling */
+table tbody tr td:nth-child(5) {
+    position: relative;
+}
+
+table tbody tr:has(td:nth-child(5):contains("admin")) td:nth-child(5) {
+    color: #e53e3e;
+}
+
+table tbody tr:has(td:nth-child(5):contains("admin")) td:nth-child(5)::before {
+    content: '●';
+    color: #e53e3e;
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+/* User badge styling */
+table tbody tr:has(td:nth-child(5):contains("user")) td:nth-child(5) {
+    color: #38a169;
+}
+
+table tbody tr:has(td:nth-child(5):contains("user")) td:nth-child(5)::before {
+    content: '●';
+    color: #38a169;
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+/* Zebra striping */
+table tbody tr:nth-child(even) {
+    background: #fafbfc;
+}
+
+table tbody tr:nth-child(even):hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.06), rgba(118, 75, 162, 0.06));
+}
+
+/* Empty state styling */
+table td[colspan="5"] {
+    text-align: center;
+    padding: 60px 20px !important;
+    color: #a0aec0;
+    font-size: 16px;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media screen and (max-width: 1400px) {
+    /* Adjust password column for medium screens */
+    table td:nth-child(4) {
+        font-size: 10px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .container {
+        margin-left: 0;
+        padding: 30px 25px;
+    }
+    
+    /* Reduce padding to fit content */
+    table th,
+    table td {
+        padding: 16px 15px;
+    }
+    
+    table th:first-child,
+    table td:first-child {
+        padding-left: 20px;
+    }
+    
+    table th:last-child,
+    table td:last-child {
+        padding-right: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 20px 15px;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+
+    .table-responsive {
+        border-radius: 12px;
+    }
+
+    table th,
+    table td {
+        padding: 12px 10px;
+        font-size: 12px;
+    }
+
+    table th:first-child,
+    table td:first-child {
+        padding-left: 15px;
+    }
+
+    table th:last-child,
+    table td:last-child {
+        padding-right: 15px;
+    }
+
+    table th {
+        font-size: 10px;
+    }
+
+    /* Adjust column widths for mobile */
+    table th:nth-child(1),
+    table td:nth-child(1) {
+        width: 15%;
+    }
+
+    table th:nth-child(2),
+    table td:nth-child(2) {
+        width: 25%;
+    }
+
+    table th:nth-child(3),
+    table td:nth-child(3) {
+        width: 15%;
+    }
+
+    table th:nth-child(4),
+    table td:nth-child(4) {
+        width: 30%;
+    }
+
+    table th:nth-child(5),
+    table td:nth-child(5) {
+        width: 15%;
+    }
+
+    table td:nth-child(4) {
+        font-size: 9px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 15px 10px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+    }
+
+    table th,
+    table td {
+        padding: 10px 6px;
+        font-size: 11px;
+    }
+
+    table th:first-child,
+    table td:first-child {
+        padding-left: 10px;
+    }
+
+    table th:last-child,
+    table td:last-child {
+        padding-right: 10px;
+    }
+
+    /* Hide password column on very small screens */
+    table th:nth-child(4),
+    table td:nth-child(4) {
+        display: none;
+    }
+    
+    /* Redistribute widths without password column */
+    table th:nth-child(1),
+    table td:nth-child(1) {
+        width: 20%;
+    }
+
+    table th:nth-child(2),
+    table td:nth-child(2) {
+        width: 35%;
+    }
+
+    table th:nth-child(3),
+    table td:nth-child(3) {
+        width: 25%;
+    }
+
+    table th:nth-child(5),
+    table td:nth-child(5) {
+        width: 20%;
+    }
+}
+
+/* Loading animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+table tbody tr {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+table tbody tr:nth-child(6) { animation-delay: 0.3s; }

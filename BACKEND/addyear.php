@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 include 'Master/conection.php';
 ?>
 <!DOCTYPE html>
@@ -6,14 +6,13 @@ include 'Master/conection.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Monthly Fee Management</title>
 </head>
 <body>
-    
     <form method="post" action="monthlyview.php">
         <label for="month">Month:</label>
-        <select name="month" id="month" required>
-            <option value="" disabled selected>Select Month</option>
+        <select name="month" required>
+            <option value="" selected>Select Month</option>
             <option value="1">January</option>
             <option value="2">February</option>
             <option value="3">March</option>
@@ -29,24 +28,34 @@ include 'Master/conection.php';
         </select>
     
         <label for="year">Year:</label>
-        <select name="year" id="year" required>
-            <option value="" disabled selected>Select Year</option>
-            <?php for($y=2025;$y<=2035;$y++){ echo "<option value='$y'>$y</option>"; } ?>
+        <select name="year" required>
+            <option value="" selected>Select Year</option>
+            <?php 
+            $currentYear = date('Y');
+            for($y = $currentYear; $y <= $currentYear + 5; $y++){ 
+                echo "<option value='$y'>$y</option>"; 
+            } 
+            ?>
         </select>
-    
-        <label for="class">Class:</label>
-        <select name="class_id" id="class" required>
-            <option value="" disabled selected>Select Class</option>
+        
+        <label for="class_section">Class & Section:</label>
+        <select name="class_section" required>
+            <option value="" selected>Select Class & Section</option>
             <?php
-            include 'conection.php';
-            $res = $conn->query("SELECT * FROM class");
+            // Show all class-section combinations in user-friendly format
+            $res = $conn->query("SELECT CONCAT(class_name, ' - Section ', class_sec) as display, 
+                                        class_name, class_sec 
+                                 FROM class 
+                                 ORDER BY class_name, class_sec");
             while($row = $res->fetch_assoc()){
-                echo "<option value='{$row['id']}'>{$row['class_name']}</option>";
+                $value = $row['class_name'] . '|' . $row['class_sec'];
+                echo "<option value='$value'>{$row['display']}</option>";
             }
             ?>
         </select>
     
+        <br><br>
         <input type="submit" value="Fetch Students">
     </form>
 </body>
-</html>
+</html> -->

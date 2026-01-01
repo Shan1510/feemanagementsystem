@@ -1,4 +1,5 @@
 <?php
+
 function renderStudentTable($result) {
 ?>
 <!DOCTYPE html>
@@ -6,6 +7,7 @@ function renderStudentTable($result) {
 <head>
     <title>Student Table</title>
 </head>
+<link rel="stylesheet" href="allstudents.css">
 <body>
 
 <table border="1" cellpadding="10">
@@ -17,6 +19,8 @@ function renderStudentTable($result) {
     <th>Contact</th>
     <th>Fee</th>
     <th>Status</th>
+    <th>Month</th>
+    <th>year</th>
 </tr>
 
 <?php
@@ -30,6 +34,9 @@ if (mysqli_num_rows($result) > 0) {
             <td>{$row['contact_number']}</td>
             <td>{$row['T_Fee']}</td>
             <td>{$row['status']}</td>
+            <td>{$row['fee_month']}</td>
+            <td>{$row['fee_year']}</td>
+
         </tr>";
     }
 } else {

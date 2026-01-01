@@ -1,0 +1,127 @@
+
+    body {
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        background:#221849;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    thead {
+        background:#3d516d;
+        color: white;
+    }
+
+    thead th {
+        padding: 12px;
+        text-align: left;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+
+    tbody td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        color: #444;
+    }
+
+    tbody tr:hover {
+        background: #f1f5ff;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Action links */
+    a {
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    a[href*="edit"] {
+        color: #4CAF50;
+    }
+
+    a[href*="delete"] {
+        color: #f44336;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* Buttons */
+    input[type="submit"] {
+        margin-top: 20px;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 6px;
+        background: #1e88e5;
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background: #1565c0;
+    }
+
+    /* Add student button */
+    .add-btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: #4CAF50;
+        color: white;
+        border-radius: 6px;
+    }
+
+    .add-btn:hover {
+        background: #43a047;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        table {
+            font-size: 12px;
+        }
+
+        thead {
+            display: none;
+        }
+
+        table, tbody, tr, td {
+            display: block;
+            width: 100%;
+        }
+
+        tbody tr {
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 10px;
+        }
+
+        tbody td {
+            border: none;
+            padding: 8px 0;
+        }
+    }
+
