@@ -1,6 +1,8 @@
 <?php
 session_start();
 $DAS=$_POST['DAS'];
+$f_name=$_POST['name'];
+
 
 $conn=new mysqli('localhost','root','','feemanagement');
 $query= "SELECT * FROM student WHERE DAS='$DAS'";

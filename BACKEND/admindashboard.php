@@ -59,7 +59,7 @@ include __DIR__ .'/adminsidebar.php';
                 <h2>🔍 Search by DAS</h2>
                 <form method="post" action="../BACKEND/search.php">
                     <input type="search" class="form-control" placeholder="Enter DAS number" name="DAS" required>
-                    <input type="number" class="form-control" placeholder="Year (YYYY)" name="year" min="2020" max="2099">
+                    <input type="number" class="form-control" placeholder="Enter Name" name="name">
                     <button type="submit" class="btn">Search Student</button>
                 </form>
             </div>

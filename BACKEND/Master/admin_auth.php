@@ -8,6 +8,6 @@ if (
     $_SESSION['logged_in'] !== true ||
     $_SESSION['type'] !== 'admin'
 ) {
-    header("Location:FRONTEND/login.html");
+    header("Location: ../../FRONTEND/login.html ");
     exit();
 }

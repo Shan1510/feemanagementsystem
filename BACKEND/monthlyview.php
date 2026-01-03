@@ -73,7 +73,7 @@ $students = mysqli_query($conn, $query);
                 
             </tr>
             
-            <?php while($student = $students-> mysqli_fetch_assoc()):
+            <?php while($student = $students->fetch_assoc()):
                 $student_id = $student['id'];
                 
                 // Get fee status
@@ -108,8 +108,8 @@ $students = mysqli_query($conn, $query);
         <input type='hidden' name='month' value='<?php echo $month; ?>'>
         <input type='hidden' name='year' value='<?php echo $year; ?>'>
         <input type='hidden' name='class_id' value='<?php echo $class_id; ?>'>
-        <input type='hidden' name='class_name' value='<?php echo($class_name); ?>'>
-        <input type='hidden' name='class_sec' value='<?php echo ($class_sec); ?>'>
+        <input type='hidden' name='class_name' value='<?php echo htmlspecialchars($class_name); ?>'>
+        <input type='hidden' name='class_sec' value='<?php echo htmlspecialchars($class_sec); ?>'>
         
         <br>
         <input type='submit' value='Update Fee Status' class='submit-btn'>
