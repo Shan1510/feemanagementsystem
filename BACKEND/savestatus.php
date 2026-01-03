@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'Master/conection.php';
+include __DIR__.'Master/conection.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);

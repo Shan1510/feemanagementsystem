@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'Master/conection.php';
+include __DIR__.'/Master/conection.php';
 
 
 if (!isset($_POST['month']) || !isset($_POST['year']) || !isset($_POST['class_name'])) {

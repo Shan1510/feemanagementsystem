@@ -1,7 +1,7 @@
 <?php
 // edit.php
 
-include 'Master/conection.php';
+include __DIR__.'/Master/conection.php';
 
 // Get student ID from URL
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;

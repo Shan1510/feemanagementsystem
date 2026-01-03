@@ -1,6 +1,6 @@
 <?php
-include __DIR__ . '/Master/conection.php';
-include __DIR__ . '/Master/admin_auth.php';
+include __DIR__ . '/../Master/conection.php';
+include __DIR__ . '/../Master/admin_auth.php';
 include __DIR__ .'/adminsidebar.php';
 
 
@@ -33,7 +33,7 @@ include __DIR__ .'/adminsidebar.php';
         <div class="stat-card total">
             <h3>Total Students</h3>
             <div class="stat-value">
-                <?php include 'totalstudents.php'; ?>
+                <?php include '../buttons/totalstudents.php'; ?>
             </div>
         </div>
     </a>
@@ -41,7 +41,7 @@ include __DIR__ .'/adminsidebar.php';
         <div class="stat-card paid">
             <h3>Paid Fees</h3>
             <div class="stat-value">
-                <?php include 'paidbutton.php'; ?>
+                <?php include '../buttons/paidbutton.php'; ?>
             </div>
         </div>
     </a>
@@ -49,7 +49,7 @@ include __DIR__ .'/adminsidebar.php';
         <div class="stat-card pending">
             <h3>Pending</h3>
             <div class="stat-value">
-                <?php include 'unpaid.php'; ?>
+                <?php include '../buttons/unpaid.php'; ?>
             </div>
         </div>
     </a>

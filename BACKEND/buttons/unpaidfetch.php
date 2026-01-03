@@ -1,6 +1,6 @@
 <?php
 
-include 'Master/conection.php';
+include __DIR__ . '/../Master/conection.php';
 
 $sql=$sql="SELECT student.*, student_fee.status, student_fee.fee_month, student_fee.fee_year
 FROM student

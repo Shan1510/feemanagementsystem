@@ -1,6 +1,6 @@
 <?php
 
-include 'Master/conection.php';
+include __DIR__ . '/../Master/conection.php';
 // include 'edit.php';
 // include 'delete.php';
 
@@ -83,7 +83,7 @@ $result=mysqli_query($conn,$sql);
 </table>
 <input type="submit" placeholder="Save" >;
 <br>
-<a href="../FRONTEND/addstudents.html">ADD STUDENT</a>
+<a href="../../FRONTEND/addstudents.html">ADD STUDENT</a>
 
 </body>
 </html>

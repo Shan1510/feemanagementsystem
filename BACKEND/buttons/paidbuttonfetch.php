@@ -1,6 +1,6 @@
 <?php
 
-include 'Master/conection.php';
+include __DIR__ . '/../Master/conection.php';
 
 include 'fetchtablecode.php';
 

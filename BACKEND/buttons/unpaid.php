@@ -1,6 +1,6 @@
 <?php
 
-include 'Master/conection.php';
+include __DIR__ . '/../Master/conection.php';
 
 // $sql= "SELECT COUNT(*) AS total_unpaid
 //         FROM student

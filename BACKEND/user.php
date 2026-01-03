@@ -55,15 +55,16 @@
 
 <?php
 session_start();
-include 'Master/conection.php';
+include __DIR__.'/Master/conection.php';
 include __DIR__ . '/Master/admin_auth.php';
-include __DIR__ . '/adminsidebar.php';
+include __DIR__ . '/admin/adminsidebar.php';
 
 $sql = "SELECT username, email, phonenumber, Password, type
         FROM signup
         WHERE type='user' OR type='admin' OR type=' '";
 
 $result = mysqli_query($conn, $sql);
+
 ?>
 
 <!DOCTYPE html>

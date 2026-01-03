@@ -25,13 +25,13 @@ if($data)
         
             if($_SESSION['type'] == 'admin')
             {
-               header('location:admindashboard.php');
+               header('location:admin/admindashboard.php');
                exit;
             }
 
        else
     {
-        header('location:userdashboard.php');
+        header('location:user/userdashboard.php');
         exit;
     }
      }
