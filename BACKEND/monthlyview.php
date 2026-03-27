@@ -60,7 +60,7 @@ $students = mysqli_query($conn, $query);
     </div>
     
     <?php if (mysqli_num_rows($students) > 0): ?>
-    <form action='updatefeestatus.php' method='post'>
+    <form action='updatefeestatus.php' method='post' id='feeForm'>
         <table>
             <tr>
                 <th>ID</th>
@@ -112,7 +112,8 @@ $students = mysqli_query($conn, $query);
         <input type='hidden' name='class_sec' value='<?php echo htmlspecialchars($class_sec); ?>'>
         
         <br>
-        <input type='submit' value='Update Fee Status' class='submit-btn'>
+        <input type='submit' value='Update Fee Status' class='submit-btn' id='saveBtn'>
+        <div id="statusMsg" style="display:none; margin-top:15px; padding:10px; border-radius:5px;"></div>
     </form>
     <?php else: ?>
     <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
@@ -120,7 +121,49 @@ $students = mysqli_query($conn, $query);
         <p>There are no students enrolled in this class and section.</p>
     </div>
     <?php endif; ?>
-    
-    <a href='select_class.php' class='back-link'>← Select Another Class</a>
+<!--     
+    <a href='select_class.php' class='back-link'>← Select Another Class</a> -->
+<script>
+document.getElementById('feeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+    let btn = document.getElementById('saveBtn');
+    let msg = document.getElementById('statusMsg');
+
+    btn.disabled = true;
+    btn.value = 'Saving...';
+
+    fetch('updatefeestatus.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(data => {
+        msg.style.display = 'block';
+        msg.style.background = '#d4edda';
+        msg.style.color = '#155724';
+        msg.style.border = '1px solid #c3e6cb';
+        msg.innerText = '✅ Fee status updated successfully!';
+
+        btn.disabled = false;
+        btn.value = 'Update Fee Status';
+
+        setTimeout(() => {
+            msg.style.display = 'none';
+        }, 3000);
+    })
+    .catch(err => {
+        msg.style.display = 'block';
+        msg.style.background = '#f8d7da';
+        msg.style.color = '#721c24';
+        msg.innerText = '❌ Something went wrong!';
+
+        btn.disabled = false;
+        btn.value = 'Update Fee Status';
+    });
+});
+</script>
+
 </body>
 </html>

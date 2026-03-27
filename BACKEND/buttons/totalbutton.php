@@ -1,5 +1,60 @@
 <?php
+include __DIR__ . '/../Master/conection.php';
+include __DIR__ . '/../Master/admin_auth.php';
 
+$sql    = "SELECT student.*, COALESCE(student_fee.status, 'unpaid') AS status 
+           FROM student 
+           LEFT JOIN student_fee ON student.id = student_fee.student_id 
+           WHERE student.is_deleted = 0";
+$result = mysqli_query($conn, $sql);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Students</title>
+    <link rel="stylesheet" href="../allstudents.css">
+</head>
+<body>
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>DAS</th>
+            <th>Student Name</th>
+            <th>Father Name</th>
+            <th>Contact</th>
+            <th>Fee</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php if (mysqli_num_rows($result) > 0):
+        while ($row = mysqli_fetch_assoc($result)): ?>
+        <tr>
+            <td><?= htmlspecialchars($row['id']) ?></td>
+            <td><?= htmlspecialchars($row['DAS']) ?></td>
+            <td><?= htmlspecialchars($row['student_name']) ?></td>
+            <td><?= htmlspecialchars($row['father_name']) ?></td>
+            <td><?= htmlspecialchars($row['contact_number']) ?></td>
+            <td><?= htmlspecialchars($row['T_Fee']) ?></td>
+            <td><?= htmlspecialchars($row['status']) ?></td>
+        </tr>
+        <?php endwhile;
+    else: ?>
+        <tr><td colspan="7">No students found</td></tr>
+    <?php endif; ?>
+    </tbody>
+</table>
+<br>
+<a href="<?= FRONTEND_URL ?>addstudents.html">ADD STUDENT</a>
+</body>
+</html>
+
+
+
+<?php
+/*
 include __DIR__ . '/../Master/conection.php';
 // include 'edit.php';
 // include 'delete.php';
@@ -90,3 +145,5 @@ $result=mysqli_query($conn,$sql);
 </table>  
 </body>
 </html>
+*/
+?>

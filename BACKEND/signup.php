@@ -1,5 +1,77 @@
 <?php
+include __DIR__ . '/Master/conection.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../FRONTEND/signup.html");
+    exit;
+}
+
+$u_name = trim($_POST['username']    ?? '');
+$Email  = trim($_POST['Email']       ?? '');
+$p_num  = trim($_POST['Phonenumber'] ?? '');
+$pass   = $_POST['Password']         ?? '';
+$c_pass = $_POST['ConfirmPassword']  ?? '';
+
+if (!$u_name || !$Email || !$p_num || !$pass || !$c_pass) {
+    echo "All fields are required.";
+    exit;
+}
+
+$emailregex = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";
+if (!preg_match($emailregex, $Email)) {
+    echo "Invalid email format.";
+    exit;
+}
+
+if ($pass !== $c_pass) {
+    echo "Passwords do not match.";
+    exit;
+}
+
+$passregex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/";
+if (!preg_match($passregex, $pass)) {
+    echo "Password must be 8+ chars with uppercase, lowercase, number and special character.";
+    exit;
+}
+
+$hashed = password_hash($pass, PASSWORD_BCRYPT);
+
+$stmt = $conn->prepare("INSERT INTO signup (username, email, Phonenumber, Password) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $u_name, $Email, $p_num, $hashed);
+
+try {
+    $stmt->execute();
+    $stmt->close();
+    header("Location: ../FRONTEND/login.html");
+    exit;
+} catch (mysqli_sql_exception $e) {
+    if ($e->getCode() == 1062) {
+        echo "Email already exists! Please use another email.";
+    } else {
+        echo "Signup failed. Please try again.";
+    }
+}
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+/*
 $u_name = $_POST['username'];
 $Email = $_POST['Email'];
 $p_number = $_POST['Phonenumber'];
@@ -62,7 +134,7 @@ catch (mysqli_sql_exception $error) {
 }
 
     
-
+*/
 
 ?>
 

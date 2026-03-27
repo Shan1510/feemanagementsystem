@@ -1,4 +1,57 @@
 <?php
+include __DIR__ . '/Master/conection.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../FRONTEND/login.php");
+    exit;
+}
+
+$email = trim($_POST['Email'] ?? '');
+$pass  = $_POST['password'] ?? '';
+
+if (!$email || !$pass) {
+    echo "All fields are required.";
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT * FROM signup WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+$data   = $result->fetch_assoc();
+$stmt->close();
+
+if ($data) {
+    if (password_verify($pass, $data['Password'])) {
+        $_SESSION['type']      = $data['type'];
+        $_SESSION['Email']     = $data['email'];
+        $_SESSION['logged_in'] = true;
+
+        if ($_SESSION['type'] === 'admin') {
+            header('Location: admin/admindashboard.php');
+        } else {
+            header('Location: user/userdashboard.php');
+        }
+        exit;
+    } else {
+        echo "Invalid Password.";
+    }
+} else {
+    echo "Invalid email.";
+}
+?>
+
+
+
+
+
+
+
+
+
+<?php
+/*
+
 session_start();
 
 
@@ -44,3 +97,5 @@ if($data)
     else{
         echo"Invalid email";
     }
+*/
+?>

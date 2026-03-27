@@ -1,4 +1,142 @@
 <?php
+include __DIR__ . '/Master/conection.php';
+include __DIR__ . '/Master/admin_auth.php';
+
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($id == 0) die("Invalid student ID");
+
+$stmt = $conn->prepare("SELECT s.*, c.class_name, c.class_sec FROM student s LEFT JOIN class c ON s.class_id = c.id WHERE s.id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows == 0) die("Student not found");
+$student = $result->fetch_assoc();
+$stmt->close();
+
+$message = '';
+$message_type = '';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $das            = trim($_POST['das']            ?? '');
+    $student_name   = trim($_POST['student_name']   ?? '');
+    $father_name    = trim($_POST['father_name']    ?? '');
+    $contact_number = trim($_POST['contact_number'] ?? '');
+    $t_fee          = floatval($_POST['t_fee']       ?? 0);
+    $class_id       = intval($_POST['class_id']      ?? 0);
+
+    if (!$das || !$student_name || !$father_name || !$contact_number || !$t_fee || !$class_id) {
+        $message      = "All fields are required.";
+        $message_type = "error";
+    } else {
+        $stmt = $conn->prepare("UPDATE student SET DAS=?, student_name=?, father_name=?, contact_number=?, T_Fee=?, class_id=? WHERE id=?");
+        $stmt->bind_param("ssssdii", $das, $student_name, $father_name, $contact_number, $t_fee, $class_id, $id);
+
+        if ($stmt->execute()) {
+            $message      = "Student updated successfully!";
+            $message_type = "success";
+            $stmt2 = $conn->prepare("SELECT s.*, c.class_name, c.class_sec FROM student s LEFT JOIN class c ON s.class_id = c.id WHERE s.id = ?");
+            $stmt2->bind_param("i", $id);
+            $stmt2->execute();
+            $student = $stmt2->get_result()->fetch_assoc();
+            $stmt2->close();
+        } else {
+            $message      = "Error updating student.";
+            $message_type = "error";
+        }
+        $stmt->close();
+    }
+}
+
+$class_result = mysqli_query($conn, "SELECT * FROM class ORDER BY class_name, class_sec");
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+        body { background:#f5f5f5; padding:20px; }
+        .container { max-width:600px; margin:0 auto; background:white; padding:30px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+        h2 { color:#333; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid #4CAF50; }
+        .message { padding:15px; margin-bottom:20px; border-radius:5px; font-weight:bold; }
+        .success { background:#d4edda; color:#155724; }
+        .error   { background:#f8d7da; color:#721c24; }
+        .form-group { margin-bottom:20px; }
+        label { display:block; margin-bottom:8px; font-weight:bold; color:#555; }
+        input[type="text"], input[type="number"], select { width:100%; padding:12px; border:1px solid #ddd; border-radius:5px; font-size:16px; }
+        .button-group { display:flex; gap:15px; margin-top:30px; }
+        .btn { padding:12px 25px; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:bold; flex:1; text-align:center; text-decoration:none; }
+        .btn-update { background:#142a53; color:white; }
+        .btn-cancel { background:#6c757d; color:white; }
+        .student-info { background:#f8f9fa; padding:15px; border-radius:5px; margin-bottom:20px; border-left:4px solid #23086e; }
+        .student-info p { margin:5px 0; color:#555; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Edit Student</h2>
+    <?php if ($message): ?>
+        <div class="message <?= $message_type ?>"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
+    <div class="student-info">
+        <p><strong>Student ID:</strong> <?= $student['id'] ?></p>
+        <p><strong>Current Class:</strong> <?= htmlspecialchars($student['class_name'] . ' - ' . $student['class_sec']) ?></p>
+    </div>
+    <form method="POST">
+        <div class="form-group">
+            <label>DAS Number:</label>
+            <input type="text" name="das" value="<?= htmlspecialchars($student['DAS']) ?>" required>
+        </div>
+        <div class="form-group">
+            <label>Student Name:</label>
+            <input type="text" name="student_name" value="<?= htmlspecialchars($student['student_name']) ?>" required>
+        </div>
+        <div class="form-group">
+            <label>Father Name:</label>
+            <input type="text" name="father_name" value="<?= htmlspecialchars($student['father_name']) ?>" required>
+        </div>
+        <div class="form-group">
+            <label>Contact Number:</label>
+            <input type="text" name="contact_number" value="<?= htmlspecialchars($student['contact_number']) ?>" required>
+        </div>
+        <div class="form-group">
+            <label>Total Fee:</label>
+            <input type="number" name="t_fee" value="<?= htmlspecialchars($student['T_Fee']) ?>" required step="0.01">
+        </div>
+        <div class="form-group">
+            <label>Class & Section:</label>
+            <select name="class_id" required>
+                <option value="">Select Class & Section</option>
+                <?php while($class = mysqli_fetch_assoc($class_result)): ?>
+                    <option value="<?= $class['id'] ?>" <?= ($class['id'] == $student['class_id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($class['class_name'] . ' - Section ' . $class['class_sec']) ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+        <div class="button-group">
+            <button type="submit" class="btn btn-update">Update Student</button>
+            <a href="javascript:history.back()" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<?php
+/*
 // edit.php
 
 include __DIR__.'/Master/conection.php';
@@ -304,3 +442,5 @@ $class_result = mysqli_query($conn, $class_sql);
     </script>
 </body>
 </html>
+*/
+?>

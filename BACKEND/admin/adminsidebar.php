@@ -1,5 +1,103 @@
 <?php
 include __DIR__ . '/../Master/conection.php';
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sidebar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="dashboard-layout">
+    <div class="sidebar-main">
+        <div class="sidebar-logo">
+            <?php if ($current_page != 'admindashboard.php'): ?>
+                <a href="javascript:history.back()" style="color:white;text-decoration:none;padding:8px 15px;border-radius:5px;font-size:28px;font-weight:900;display:inline-block;line-height:1;">←</a>
+            <?php endif; ?>
+            <h2>💰 Fee System</h2>
+            <p>Admin Panel</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="<?= BASE_URL ?>select_class.php">📅 Monthly Fees</a>
+            <a href="<?= FRONTEND_URL ?>addstudents.html">👨‍🎓 Add Student</a>
+            <a href="<?= FRONTEND_URL ?>addclass.html">🏫 Add Class</a>
+            <a href="<?= BASE_URL ?>allstudents.php">📊 All Students</a>
+            <a href="<?= BASE_URL ?>user.php">👥 Users</a>
+            <a href="<?= BASE_URL ?>report.php">📊 Monthly Report</a>
+            <form action="<?= BASE_URL ?>Master/logout.php" method="post">
+                <button type="submit" style="width:100%;padding:10px;background:#e74c3c;color:white;border:none;border-radius:5px;cursor:pointer;font-size:15px;margin-top:10px;">🚪 Logout</button>
+            </form>
+        </nav>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+/*
+include __DIR__ . '/../Master/conection.php';
+// include __DIR__ . '/../Master/admin_auth.php';
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sidebar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="dashboard-layout">
+    <div class="sidebar-main">
+        <div class="sidebar-logo">
+            <?php if ($current_page != 'admindashboard.php'): ?>
+                <a href="javascript:history.back()" style="color:white;text-decoration:none;padding:8px 15px;border-radius:5px;font-size:28px;font-weight:900;display:inline-block;line-height:1;">←</a>
+            <?php endif; ?>
+            <h2>💰 Fee System</h2>
+            <p>Admin Panel</p>
+        </div>
+        <nav class="sidebar-menu">
+            <!-- <a href="../select_class.php">📅 Monthly Fees</a>
+            <a href="../../FRONTEND/addstudents.html">👨‍🎓 Add Student</a> -->
+            <a href="<?= BASE_URL ?>select_class.php">📅 Monthly Fees</a>
+             <a href="<?= FRONTEND_URL ?>addstudents.html">👨‍🎓 Add Student</a>
+            <a href="<?=FRONTEND_URL?>addclass.html">🏫 Add Class</a>
+            <a href="<?= BASE_URL ?>allstudents.php">📊 All Students</a>
+            <a href="<?= BASE_URL ?>user.php">👥 Users</a>
+            <form action="../Master/logout.php" method="post">
+                <button type="submit" style="width:100%;padding:10px;background:#e74c3c;color:white;border:none;border-radius:5px;cursor:pointer;font-size:15px;margin-top:10px;">🚪 Logout</button>
+            </form>
+        </nav>
+    </div>
+
+
+
+*/
+
+?>
+<?php
+/*
+include __DIR__ . '/../Master/conection.php';
 include __DIR__ . '/../Master/admin_auth.php';
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
@@ -79,3 +177,5 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </div>
 </body>
 </html> -->
+*/
+?>
