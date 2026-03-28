@@ -1,169 +1,126 @@
 <?php
-session_start();
-include 'Master/conection.php';
+include __DIR__ . '/Master/conection.php';
+include __DIR__ . '/Master/admin_auth.php';
 
-
-if (!isset($_POST['month']) || !isset($_POST['year']) || !isset($_POST['class_name']) || !isset($_POST['class_sec'])) {
-    header("Location: select_class.php?error=Please complete all steps");
-    exit();
-}
-
-
-$month = $_POST['month'];
-$year = $_POST['year'];
-$class_name = $_POST['class_name'];
-$class_sec = $_POST['class_sec'];
-
-
-$month_names = [
-    1=>'January',2=>'February',3=>'March',4=>'April',5=>'May',6=>'June',
-    7=>'July',8=>'August',9=>'September',10=>'October',11=>'November',12=>'December'
+$monthNames = [
+    1=>'January',  2=>'February', 3=>'March',     4=>'April',
+    5=>'May',      6=>'June',     7=>'July',       8=>'August',
+    9=>'September',10=>'October', 11=>'November',  12=>'December'
 ];
 
-
-if (!isset($month_names[$month])) {
-    header("Location: select_class.php? error=Invalid month selected");
-    exit();
-}
-
-
-$class_query = "SELECT id FROM class WHERE class_name = '" . $conn->real_escape_string($class_name) . "' 
-                AND class_sec = '" . $conn->real_escape_string($class_sec) . "' LIMIT 1";
-$class_result = mysqli_query($conn, $class_query);
-
-if (mysqli_num_rows($class_result) == 0) {
-    die("<h3>Error: Class '$class_name - Section $class_sec' not found!</h3>
-         <p><a href='select_class.php'>← Go back and try again</a></p>");
-}
-
-$class_row = mysqli_fetch_assoc($class_result);
-$class_id = $class_row['id'];
-
-
-$query = "SELECT * FROM student WHERE class_id = '$class_id'";
-$students = mysqli_query($conn, $query);
-
-
+$classRes = $conn->query("SELECT DISTINCT class_name FROM class ORDER BY class_name");
+$classes  = [];
+while($c = $classRes->fetch_assoc()) $classes[] = $c['class_name'];
 ?>
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Fee View - Fee Management</title>
-    <link href="monthlyview.css" rel="stylesheet">
+    <title>Monthly Fee View</title>
+    <link href="admin/style.css" rel="stylesheet">
+    <link href="admin/admin.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>monthlyview.css" rel="stylesheet">
+    
+    <style>
+        .dashboard-layout {
+            display: flex !important;
+        }
+        .main-content {
+            flex: 1 !important;
+            min-width: 0 !important;
+            padding: 30px !important;
+            justify-content: flex-start !important;
+            align-items: stretch !important;
+        }
+        .filter-box, .table-wrap, #resultHeader {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+    </style>
+
 </head>
 <body>
-    <div class="header">
-        <h2>Fee Status - <?php echo $month_names[$month] . " $year - $class_name Section $class_sec"; ?></h2>
-        <p>Total Students: <?php echo mysqli_num_rows($students); ?></p>
+<div class="dashboard-layout">
+
+    <?php include __DIR__ . '/admin/adminsidebar.php'; ?>
+
+    <div class="main-content">
+
+        <h2 style="font-size:1.8rem; font-weight:700; color:#0f172a; margin-bottom:25px;">📅 Monthly Fee View</h2>
+
+        <div class="filter-box">
+            <div class="filter-group">
+                <label>Month</label>
+                <select id="f-month" onchange="checkFilters()">
+                    <option value="">Select Month</option>
+                    <?php foreach($monthNames as $num => $name): ?>
+                        <option value="<?= $num ?>"><?= $name ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Year</label>
+                <select id="f-year" onchange="checkFilters()">
+                    <option value="">Select Year</option>
+                    <?php
+                    $cy = date('Y');
+                    for($y = $cy; $y >= $cy - 5; $y--) {
+                        echo "<option value='$y'>$y</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Class</label>
+                <select id="f-class" onchange="loadSections()">
+                    <option value="">Select Class</option>
+                    <?php foreach($classes as $c): ?>
+                        <option value="<?= htmlspecialchars($c) ?>"><?= htmlspecialchars($c) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Section</label>
+                <select id="f-sec" onchange="checkFilters()" disabled>
+                    <option value="">Select Section</option>
+                </select>
+            </div>
+            <button class="fetch-btn" id="fetchBtn" onclick="fetchStudents()" disabled>
+                🔍 Fetch Students
+            </button>
+        </div>
+
+        <div id="resultHeader" style="display:none;">
+            <div class="result-header">
+                <h3 id="resultTitle">-</h3>
+                <div class="badges">
+                    <span class="badge-paid"   id="paidCount">Paid: 0</span>
+                    <span class="badge-unpaid" id="unpaidCount">Unpaid: 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ THIS WAS THE BUG: tableWrap was visible on page load -->
+        <div class="table-wrap" id="tableWrap" style="display:none;">
+            <div id="tableBody"></div>
+            <div class="save-wrap" id="saveWrap" style="display:none;">
+                <button class="save-btn" id="saveBtn" onclick="saveStatus()">💾 Save Fee Status</button>
+                <div id="saveMsg"></div>
+            </div>
+        </div>
+
     </div>
-    
-    <?php if (mysqli_num_rows($students) > 0): ?>
-    <form action='updatefeestatus.php' method='post' id='feeForm'>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>DAS</th>
-                <th>Student Name</th>
-                <th>Father Name</th>
-                <th>Contact</th>
-                <th>Total Fee</th>
-                <th>Fee Status</th>
-                
-            </tr>
-            
-            <?php while($student = $students->fetch_assoc()):
-                $student_id = $student['id'];
-                
-                // Get fee status
-                $fee_q = $conn->query("SELECT status FROM student_fee WHERE student_id='$student_id' AND fee_month='$month' AND fee_year='$year'");
-                $fee = $fee_q->fetch_assoc();
-                $status = $fee['status'] ?? 'unpaid';
-            ?>
-            <tr>
-                <td><?php echo $student['id']; ?></td>
-                <td><?php echo htmlspecialchars($student['DAS']); ?></td>
-                <td><?php echo htmlspecialchars($student['student_name']); ?></td>
-                <td><?php echo htmlspecialchars($student['father_name']); ?></td>
-                <td><?php echo htmlspecialchars($student['contact_number']); ?></td>
-                <td><?php echo $student['T_Fee']; ?></td>
-                <td>
-                    <label class="status-label">
-                        <input type='radio' name='status[<?php echo $student_id; ?>]' value='paid' <?php echo ($status=='paid'?'checked':''); ?>> Paid
-                    </label>
-                    <label class="status-label">
-                        <input type='radio' name='status[<?php echo $student_id; ?>]' value='unpaid' <?php echo ($status=='unpaid'?'checked':''); ?>> Unpaid
-                    </label>
-                </td>
-                <!-- <td class="actions">
-                    <a href='edit.php?id=<?php echo $student['id']; ?>'>Edit</a> |
-                    <a href='delete.php?id=<?php echo $student['id']; ?>' onclick='return confirm("Delete this student?")'>Delete</a>
-                </td> -->
-            </tr>
-            <?php endwhile; ?>
-        </table>
-        
-        <!-- Hidden inputs -->
-        <input type='hidden' name='month' value='<?php echo $month; ?>'>
-        <input type='hidden' name='year' value='<?php echo $year; ?>'>
-        <input type='hidden' name='class_id' value='<?php echo $class_id; ?>'>
-        <input type='hidden' name='class_name' value='<?php echo htmlspecialchars($class_name); ?>'>
-        <input type='hidden' name='class_sec' value='<?php echo htmlspecialchars($class_sec); ?>'>
-        
-        <br>
-        <input type='submit' value='Update Fee Status' class='submit-btn' id='saveBtn'>
-        <div id="statusMsg" style="display:none; margin-top:15px; padding:10px; border-radius:5px;"></div>
-    </form>
-    <?php else: ?>
-    <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
-        <h3>No students found in <?php echo $class_name . " Section " . $class_sec; ?></h3>
-        <p>There are no students enrolled in this class and section.</p>
-    </div>
-    <?php endif; ?>
-<!--     
-    <a href='select_class.php' class='back-link'>← Select Another Class</a> -->
+</div>
+
 <script>
-document.getElementById('feeForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    let formData = new FormData(this);
-    let btn = document.getElementById('saveBtn');
-    let msg = document.getElementById('statusMsg');
-
-    btn.disabled = true;
-    btn.value = 'Saving...';
-
-    fetch('updatefeestatus.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.text())
-    .then(data => {
-        msg.style.display = 'block';
-        msg.style.background = '#d4edda';
-        msg.style.color = '#155724';
-        msg.style.border = '1px solid #c3e6cb';
-        msg.innerText = '✅ Fee status updated successfully!';
-
-        btn.disabled = false;
-        btn.value = 'Update Fee Status';
-
-        setTimeout(() => {
-            msg.style.display = 'none';
-        }, 3000);
-    })
-    .catch(err => {
-        msg.style.display = 'block';
-        msg.style.background = '#f8d7da';
-        msg.style.color = '#721c24';
-        msg.innerText = '❌ Something went wrong!';
-
-        btn.disabled = false;
-        btn.value = 'Update Fee Status';
-    });
-});
+    console.log(document.querySelector('.dashboard-layout').getBoundingClientRect().width)
+    
+    console.log("rooshan");
+    
+    
+    
+const BASE_URL = "<?= BASE_URL ?>";
 </script>
+<script src="monthlyview.js"></script>
 
 </body>
 </html>

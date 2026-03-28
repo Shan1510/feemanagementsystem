@@ -1,6 +1,7 @@
 <?php
 include __DIR__ . '/Master/conection.php';
 include __DIR__ . '/Master/admin_auth.php';
+include __DIR__ . '/admin/adminsidebar.php';
 
 // All classes fetch karo
 $allClasses = mysqli_query($conn, "SELECT * FROM class ORDER BY class_name, class_sec");
@@ -22,10 +23,19 @@ $monthNames = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly Fee Report</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Segoe UI',sans-serif; background:#f1f5f9; padding:30px; }
+        /* Report Page Specific Styles */
+        .report-container {
+            width: 1350px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-        h2 { font-size:1.8rem; font-weight:700; color:#0f172a; margin-bottom:25px; }
+        .report-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 25px;
+        }
 
         /* Filter Box */
         .filter-box {
@@ -63,9 +73,12 @@ $monthNames = [
             color: #334155;
             outline: none;
             min-width: 140px;
+            cursor: pointer;
         }
 
-        .filter-group select:focus { border-color: #6366f1; }
+        .filter-group select:focus { 
+            border-color: #6366f1; 
+        }
 
         .load-btn {
             padding: 9px 22px;
@@ -77,6 +90,7 @@ $monthNames = [
             font-weight: 600;
             cursor: pointer;
             height: 42px;
+            transition: all 0.3s ease;
         }
 
         .download-btn {
@@ -90,10 +104,16 @@ $monthNames = [
             cursor: pointer;
             height: 42px;
             margin-left: auto;
+            transition: all 0.3s ease;
         }
 
-        .download-btn:hover { background: #15803d; }
-        .load-btn:hover     { background: #334155; }
+        .download-btn:hover { 
+            background: #15803d; 
+        }
+        
+        .load-btn:hover { 
+            background: #334155; 
+        }
 
         /* Class Pills */
         .classes-wrap {
@@ -106,7 +126,7 @@ $monthNames = [
         .class-pill {
             padding: 8px 16px;
             border-radius: 20px;
-            border: 0.5px solid #e2e8f0;
+            border: 1px solid #e2e8f0;
             background: #f8fafc;
             color: #64748b;
             font-size: 13px;
@@ -124,13 +144,14 @@ $monthNames = [
         .class-pill:hover:not(.active) {
             background: #f1f5f9;
             border-color: #cbd5e1;
+            transform: translateY(-1px);
         }
 
         /* Table */
         .table-wrap {
             background: white;
             border-radius: 14px;
-            overflow: hidden;
+            overflow-x: auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.07);
             display: none;
         }
@@ -141,15 +162,21 @@ $monthNames = [
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .table-header h3 {
             font-size: 15px;
             font-weight: 700;
             color: #0f172a;
+            margin: 0;
         }
 
-        .badges { display: flex; gap: 8px; }
+        .badges { 
+            display: flex; 
+            gap: 8px; 
+        }
 
         .badge-paid {
             font-size: 12px;
@@ -169,9 +196,16 @@ $monthNames = [
             font-weight: 600;
         }
 
-        table { width: 100%; border-collapse: collapse; }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 600px;
+        }
 
-        thead tr { background: #1e293b; }
+        thead tr { 
+            background: #1e293b; 
+        }
+        
         thead th {
             padding: 12px 14px;
             color: white;
@@ -180,9 +214,20 @@ $monthNames = [
             font-weight: 600;
         }
 
-        tbody tr { border-bottom: 0.5px solid #f1f5f9; transition: background 0.15s; }
-        tbody tr:hover { background: #f8fafc; }
-        tbody td { padding: 11px 14px; font-size: 13px; color: #334155; }
+        tbody tr { 
+            border-bottom: 1px solid #f1f5f9; 
+            transition: background 0.15s; 
+        }
+        
+        tbody tr:hover { 
+            background: #f8fafc; 
+        }
+        
+        tbody td { 
+            padding: 11px 14px; 
+            font-size: 13px; 
+            color: #334155; 
+        }
 
         .status-paid {
             display: inline-block;
@@ -221,59 +266,116 @@ $monthNames = [
             border-radius: 14px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.07);
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .report-container {
+                padding: 0 15px;
+            }
+            
+            .filter-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group select {
+                width: 100%;
+            }
+            
+            .download-btn {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .load-btn {
+                width: 100%;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .classes-wrap {
+                justify-content: center;
+            }
+            
+            .class-pill {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            
+            thead th,
+            tbody td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
 
-<h2>📊 Monthly Fee Report</h2>
+<div class="dashboard-layout">
+    <!-- Sidebar is included from adminsidebar.php -->
+    
+    <div class="main-content">
+        <div class="report-container">
+            <div class="report-header">
+                <h2>📊 Monthly Fee Report</h2>
+            </div>
+            
+            <!-- Filter Box -->
+            <div class="filter-box">
+                <div class="filter-group">
+                    <label>Month</label>
+                    <select id="f-month">
+                        <option value="">Select Month</option>
+                        <?php foreach($monthNames as $num => $name): ?>
+                            <option value="<?= $num ?>"><?= $name ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Year</label>
+                    <select id="f-year">
+                        <option value="">Select Year</option>
+                        <?php
+                        $cy = date('Y');
+                        for($y = $cy; $y >= $cy - 5; $y--) {
+                            echo "<option value='$y'>$y</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <button class="load-btn" onclick="loadClasses()">Load Classes</button>
+                <button class="download-btn" id="downloadBtn" style="display:none;" onclick="downloadExcel()">
+                    ⬇️ Download Excel
+                </button>
+            </div>
 
-<!-- Filter Box -->
-<div class="filter-box">
-    <div class="filter-group">
-        <label>Month</label>
-        <select id="f-month">
-            <option value="">Select Month</option>
-            <?php foreach($monthNames as $num => $name): ?>
-                <option value="<?= $num ?>"><?= $name ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-    <div class="filter-group">
-        <label>Year</label>
-        <select id="f-year">
-            <option value="">Select Year</option>
-            <?php
-            $cy = date('Y');
-            for($y = $cy; $y >= $cy - 5; $y--) {
-                echo "<option value='$y'>$y</option>";
-            }
-            ?>
-        </select>
-    </div>
-    <button class="load-btn" onclick="loadClasses()">Load Classes</button>
-    <button class="download-btn" id="downloadBtn" style="display:none;" onclick="downloadExcel()">
-        ⬇️ Download Excel
-    </button>
-</div>
+            <!-- Class Pills -->
+            <div class="classes-wrap" id="classesPills" style="display:none;"></div>
 
-<!-- Class Pills -->
-<div class="classes-wrap" id="classesPills" style="display:none;"></div>
+            <!-- Table -->
+            <div class="table-wrap" id="tableWrap">
+                <div class="table-header">
+                    <h3 id="tableTitle">-</h3>
+                    <div class="badges">
+                        <span class="badge-paid" id="paidCount">Paid: 0</span>
+                        <span class="badge-unpaid" id="unpaidCount">Unpaid: 0</span>
+                    </div>
+                </div>
+                <div id="tableBody">
+                    <div class="loading">⏳ Loading...</div>
+                </div>
+            </div>
 
-<!-- Table -->
-<div class="table-wrap" id="tableWrap">
-    <div class="table-header">
-        <h3 id="tableTitle">-</h3>
-        <div class="badges">
-            <span class="badge-paid"  id="paidCount">Paid: 0</span>
-            <span class="badge-unpaid" id="unpaidCount">Unpaid: 0</span>
+            <div id="noData">No students found for this class.</div>
         </div>
     </div>
-    <div id="tableBody">
-        <div class="loading">⏳ Loading...</div>
-    </div>
 </div>
-
-<div id="noData">No students found for this class.</div>
 
 <script>
 let selectedMonth   = '';
@@ -379,7 +481,7 @@ function loadClassData(classId, className) {
             html += `
             <tr>
                 <td>${i+1}</td>
-                <td>${s.DAS}</td>
+                <td>${s.DAS || '-'}</td>
                 <td>${s.student_name}</td>
                 <td>${s.father_name}</td>
                 <td>${s.contact_number}</td>

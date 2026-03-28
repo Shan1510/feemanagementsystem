@@ -17,12 +17,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <?php if ($current_page != 'admindashboard.php'): ?>
                 <a href="javascript:history.back()" style="color:white;text-decoration:none;padding:8px 15px;border-radius:5px;font-size:28px;font-weight:900;display:inline-block;line-height:1;">←</a>
             <?php endif; ?>
-            <h2>💰 Fee System</h2>
+              <a href="<?= BASE_URL ?>/admin/admindashboard.php" style="text-decoration: none; color: white;"   style="text-decoration: none; color: white; display: inline-block; transition: opacity 0.3s;"
+   onmouseover="this.style.opacity='0.8'" 
+   onmouseout="this.style.opacity='1'">>
+                
+            <h2>💰 Fee System  </h2>
             <p>Admin Panel</p>
+            </a>
         </div>
         <nav class="sidebar-menu">
-            <a href="<?= BASE_URL ?>select_class.php">📅 Monthly Fees</a>
-            <a href="<?= FRONTEND_URL ?>addstudents.html">👨‍🎓 Add Student</a>
+            <a href="<?= BASE_URL ?>monthlyview.php">📅 Monthly Fees</a>
+            <a href="<?= FRONTEND_URL ?>addstudents.php">👨‍🎓 Add Student</a>
             <a href="<?= FRONTEND_URL ?>addclass.html">🏫 Add Class</a>
             <a href="<?= BASE_URL ?>allstudents.php">📊 All Students</a>
             <a href="<?= BASE_URL ?>user.php">👥 Users</a>

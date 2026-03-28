@@ -1,58 +1,58 @@
- <?php
- session_start();
-include 'Master/conection.php';
+<?php
+include __DIR__ . '/Master/conection.php';
+include __DIR__ . '/Master/admin_auth.php';
 
+$class_name = $_GET['class_name'] ?? '';
 
-$sql = "
-SELECT student.id,
-       student.DAS,
-       student.student_name,
-       student.father_name,
-       student.contact_number,
-       student.T_Fee,
-       class.class_name,
-       class.Class_sec
-FROM student
-JOIN class ON student.class_id = class.id
-";
+// ── STUDENTS MODE ──────────────────────────────────────────
+if (isset($_GET['students'])) {
+    $sec   = $_GET['sec']   ?? '';
+    $month = $_GET['month'] ?? '';
+    $year  = $_GET['year']  ?? '';
 
-$result = mysqli_query($conn, $sql);
+    // Get class id
+    $stmt = $conn->prepare("SELECT id FROM class WHERE class_name = ? AND class_sec = ?");
+    $stmt->bind_param("ss", $class_name, $sec);
+    $stmt->execute();
+    $classRow = $stmt->get_result()->fetch_assoc();
+    $class_id = $classRow ? $classRow['id'] : null;
 
+    // Get students with fee status from student_fee table
+    $stmt = $conn->prepare("
+        SELECT s.id, s.DAS, s.student_name, s.father_name, s.contact_number, s.T_Fee,
+               COALESCE(sf.status, 'unpaid') AS status
+        FROM student s
+        LEFT JOIN student_fee sf
+            ON sf.student_id = s.id 
+            AND sf.fee_month = ? 
+            AND sf.fee_year  = ?
+        WHERE s.class_id = ?
+        ORDER BY s.student_name
+    ");
+    $stmt->bind_param("iii", $month, $year, $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            
-            echo "<tr>";
-            echo "<td>{$row['id']}</td>";
-            echo "<td>{$row['DAS']}</td>";
-            echo "<td>{$row['student_name']}</td>";
-            echo "<td>{$row['father_name']}</td>";
-            echo "<td>{$row['contact_number']}</td>";
-            echo "<td>{$row['T_Fee']}</td>";
-            echo "<td>{$row['class_name']}</td>";
-            echo "<td>{$row['Class_sec']}</td>";
-
-            // STATUS COLUMN
-            
-            echo "<td>
-                    <label>
-                        <input type='radio' name='status_{$row['id']}' value='paid'> Paid
-                    </label>
-                    <label>
-                        <input type='radio' name='status_{$row['id']}' value='unpaid'> Not Paid
-                    </label>
-                  </td>";
-                  
-
-            // ACTION COLUMN
-            echo "<td>
-                    <a href='edit.php?id={$row['id']}'>Edit</a> |
-                    <a href='delete.php?id={$row['id']}'>Delete</a>
-                  </td>";
-
-            echo "</tr>";
-        }
-    } else {
-        echo "<tr><td colspan='10'>No students found</td></tr>";
+    $students = [];
+    while($row = $result->fetch_assoc()) {
+        $students[] = $row;
     }
-    ?>
+
+    header('Content-Type: application/json');
+    echo json_encode(['class_id' => $class_id, 'students' => $students]);
+    exit;
+}
+
+// ── SECTIONS MODE (default) ────────────────────────────────
+$stmt = $conn->prepare("SELECT class_sec FROM class WHERE class_name = ? ORDER BY Class_sec");
+$stmt->bind_param("s", $class_name);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$sections = [];
+while($row = $result->fetch_assoc()) {
+    $sections[] = $row;
+}
+
+header('Content-Type: application/json');
+echo json_encode($sections);

@@ -21,7 +21,7 @@ body {
 
     display: flex;
     justify-content: center;         /* CENTER CONTENT */
-    padding: 30px 180px;
+    padding: 30px 30px;
 }
 
 /* CENTER WRAPPER */

@@ -1,93 +1,152 @@
-/* Import a modern font (optional, but recommended for a sleek look) */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-/* Reset and base styles */
-* {
+body {
     margin: 0;
     padding: 0;
+    overflow: hidden;   /* removes scroll */
+}
+
+.form-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;   /* centers the form */
+    background: var(--color-background-primary, #fff);
+    padding: 24px;
+    border-radius: 12px;
+    border: 0.5px solid #e5e7eb;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.form-wrapper h2 {
+    margin: 0 0 18px;
+    color: #1f2937;
+    font-size: 17px;
+    font-weight: 500;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 12px;
+}
+
+/* ================= 2-COLUMN ROW ================= */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* ================= SINGLE FIELD ================= */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+
+/* ================= LABELS ================= */
+.form-field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 5px;
+}
+
+/* ================= INPUTS ================= */
+.form-field input[type="text"] {
+    padding: 8px 12px;
+    border: 0.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1f2937;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+    width: 100%;
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #15235f 0%, #0c043b 100%); /* Subtle gradient background */
-    color: #333;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #fff;
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-form {
-    background: #fff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-label {
-    font-weight: 500;
-    color: #555;
-    margin-bottom: 5px;
-    display: block;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background: #f9f9f9;
-}
-
-input[type="text"]:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+.form-field input[type="text"]:focus {
     outline: none;
+    border-color: #2563eb;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-input[type="submit"] {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    padding: 12px 20px;
+.form-field input[type="text"]::placeholder {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+/* ================= SUBMIT BUTTON ================= */
+.form-wrapper input[type="submit"] {
+    margin-top: 6px;
+    padding: 10px;
+    background: #2563eb;
+    color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 500;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    align-self: flex-start; /* Align to left, or center if preferred */
-    margin-top: 10px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: block;
+    width: 100%;
 }
 
-input[type="submit"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+.form-wrapper input[type="submit"]:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-    form {
+.form-wrapper input[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* ================= RESPONSE MESSAGE ================= */
+#responseMsg {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    display: none;
+    align-items: center;
+    gap: 8px;
+}
+
+.msg-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 0.5px solid #6ee7b7;
+    display: flex !important;
+}
+
+.msg-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 0.5px solid #fca5a5;
+    display: flex !important;
+}
+
+/* ================= MAIN CONTENT ================= */
+.main-content {
+    margin-left: 250px;      /* sidebar space */
+    height: 100vh;           /* fixed screen height */
+    padding: 20px;
+    background: #f5f7fa;
+
+    display: flex;
+    justify-content: center; /* center horizontally */
+    align-items: center;     /* center vertically */
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
         padding: 20px;
     }
-    h1 {
-        font-size: 2rem;
+
+    .form-wrapper {
+        max-width: 100%;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
     }
 }
