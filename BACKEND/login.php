@@ -2,7 +2,7 @@
 include __DIR__ . '/Master/conection.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../FRONTEND/login.php");
+    header("Location: ../FRONTEND/index.php");
     exit;
 }
 
