@@ -1,13 +1,12 @@
 <?php
+
 include __DIR__ . '/Master/conection.php';
 include __DIR__ . '/Master/admin_auth.php';
 
 $month = intval($_GET['month'] ?? 0);
 $year  = intval($_GET['year']  ?? 0);
 
-if (!$month || !$year) {
-    die("Invalid request");
-}
+if (!$month || !$year) die("Invalid request");
 
 $monthNames = [
     1=>'January', 2=>'February', 3=>'March',    4=>'April',
@@ -15,71 +14,78 @@ $monthNames = [
     9=>'September',10=>'October',11=>'November', 12=>'December'
 ];
 
-// All classes fetch karo
 $classes = mysqli_query($conn, "SELECT * FROM class ORDER BY class_name, class_sec");
 
-// Excel headers
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment; filename="Fee_Report_' . $monthNames[$month] . '_' . $year . '.xls"');
 header('Cache-Control: max-age=0');
 
 echo '<html><head><meta charset="UTF-8"></head><body>';
-echo '<h2>Fee Report - ' . $monthNames[$month] . ' ' . $year . '</h2>';
-echo '<br>';
+echo '<h2>Fee Report - ' . $monthNames[$month] . ' ' . $year . '</h2><br>';
 
 while($class = mysqli_fetch_assoc($classes)) {
     $class_id  = $class['id'];
     $className = $class['class_name'] . ' - ' . $class['class_sec'];
 
-    // Students fetch karo
     $stmt = $conn->prepare("
         SELECT s.DAS, s.student_name, s.father_name, s.contact_number, s.T_Fee,
                COALESCE(sf.status, 'unpaid') AS status,
-               pd.payment_method, pd.transaction_id, pd.amount_paid
+               p.payment_method,
+               p.transaction_id,
+               pm.amount_paid,
+               pm.remaining,
+               p.payment_date
         FROM student s
-        LEFT JOIN student_fee sf 
-            ON s.id = sf.student_id 
-            AND sf.fee_month = ? 
+        LEFT JOIN student_fee sf
+            ON s.id = sf.student_id
+            AND sf.fee_month = ?
             AND sf.fee_year = ?
-        LEFT JOIN payment_details pd 
-            ON sf.id = pd.student_fee_id
+        LEFT JOIN payment_months pm
+            ON s.id = pm.student_id
+            AND pm.fee_month = ?
+            AND pm.fee_year = ?
+        LEFT JOIN payments p
+            ON pm.payment_id = p.id
         WHERE s.class_id = ? AND s.is_deleted = 0
         ORDER BY s.student_name
     ");
-    $stmt->bind_param("iii", $month, $year, $class_id);
+    $stmt->bind_param("iiiii", $month, $year, $month, $year, $class_id);
     $stmt->execute();
     $result   = $stmt->get_result();
     $students = [];
-    while($row = $result->fetch_assoc()) {
-        $students[] = $row;
-    }
+    while($row = $result->fetch_assoc()) $students[] = $row;
     $stmt->close();
 
     if (empty($students)) continue;
 
-    $paid   = count(array_filter($students, fn($s) => $s['status'] === 'paid'));
-    $unpaid = count($students) - $paid;
+    $paid    = count(array_filter($students, fn($s) => $s['status'] === 'paid'));
+    $partial = count(array_filter($students, fn($s) => $s['status'] === 'partial'));
+    $unpaid  = count($students) - $paid - $partial;
 
-    echo '<h3>' . $className . ' | Paid: ' . $paid . ' | Unpaid: ' . $unpaid . '</h3>';
-    echo '<table border="1" cellpadding="5" cellspacing="0">';
-    echo '<thead style="background:#1e293b; color:white;">
+    echo '<h3>' . $className . ' | Paid: ' . $paid . ' | Partial: ' . $partial . ' | Unpaid: ' . $unpaid . '</h3>';
+    echo '<table border="1" cellpadding="5" cellspacing="0">
+          <thead style="background:#1e293b; color:white;">
             <tr>
                 <th>#</th>
                 <th>DAS</th>
                 <th>Student Name</th>
                 <th>Father Name</th>
                 <th>Contact</th>
-                <th>Total Fee</th>
+                <th>Monthly Fee</th>
                 <th>Status</th>
-                <th>Payment Method</th>
-                <th>Transaction ID</th>
                 <th>Amount Paid</th>
+                <th>Remaining</th>
+                <th>Method</th>
+                <th>Transaction ID</th>
+                <th>Payment Date</th>
             </tr>
           </thead><tbody>';
 
     foreach($students as $i => $s) {
-        $bgColor = $s['status'] === 'paid' ? '#d1fae5' : '#fee2e2';
-        echo '<tr style="background:' . $bgColor . '">
+        $bg = $s['status'] === 'paid'    ? '#d1fae5' :
+             ($s['status'] === 'partial' ? '#fef9c3' : '#fee2e2');
+
+        echo '<tr style="background:' . $bg . '">
                 <td>' . ($i+1) . '</td>
                 <td>' . htmlspecialchars($s['DAS']) . '</td>
                 <td>' . htmlspecialchars($s['student_name']) . '</td>
@@ -87,14 +93,14 @@ while($class = mysqli_fetch_assoc($classes)) {
                 <td>' . htmlspecialchars($s['contact_number']) . '</td>
                 <td>Rs. ' . $s['T_Fee'] . '</td>
                 <td>' . ucfirst($s['status']) . '</td>
+                <td>Rs. ' . ($s['amount_paid'] ?? '0') . '</td>
+                <td>Rs. ' . ($s['remaining']   ?? $s['T_Fee']) . '</td>
                 <td>' . ucfirst($s['payment_method'] ?? '-') . '</td>
                 <td>' . htmlspecialchars($s['transaction_id'] ?? '-') . '</td>
-                <td>' . ($s['amount_paid'] ?? '-') . '</td>
+                <td>' . ($s['payment_date'] ?? '-') . '</td>
               </tr>';
     }
-
     echo '</tbody></table><br><br>';
 }
-
 echo '</body></html>';
 ?>

@@ -60,371 +60,583 @@ include __DIR__ . '/adminsidebar.php';
         </div>
     </main>
 
-<!-- POPUP OVERLAY -->
+<!-- PAYMENT POPUP -->
 <div id="searchOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:14px; width:520px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+<div style="background:white; border-radius:14px; width:580px; max-height:92vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
 
-        <!-- Header -->
-        <div style="background:#1e293b; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10;">
-            <div>
-                <p style="color:#f1f5f9; font-size:15px; font-weight:600; margin:0;">Student Details</p>
-                <p style="color:#94a3b8; font-size:12px; margin:4px 0 0 0;" id="popupDAS"></p>
-            </div>
-            <button onclick="closePopup()" style="background:#e74c3c; color:white; border:none; border-radius:6px; padding:5px 12px; cursor:pointer; font-size:16px;">✕</button>
+    <!-- Header -->
+    <div style="background:#1e293b; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10;">
+        <div>
+            <p style="color:#f1f5f9; font-size:15px; font-weight:600; margin:0;">Payment Entry</p>
+            <p style="color:#94a3b8; font-size:12px; margin:4px 0 0 0;" id="popupDAS"></p>
         </div>
-
-        <!-- Student Info -->
-        <div style="padding:16px 18px; border-bottom:1px solid #f1f5f9;">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
-                    <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase; letter-spacing:0.5px;">Student</p>
-                    <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupName"></p>
-                </div>
-                <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
-                    <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase; letter-spacing:0.5px;">Father</p>
-                    <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupFather"></p>
-                </div>
-                <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
-                    <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase; letter-spacing:0.5px;">Contact</p>
-                    <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupContact"></p>
-                </div>
-                <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
-                    <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase; letter-spacing:0.5px;">Total Fee</p>
-                    <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupFee"></p>
-                </div>
-                <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
-                    <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase; letter-spacing:0.5px;">Class</p>
-                    <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupClass"></p>
-                </div>
-                <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
-                    <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase; letter-spacing:0.5px;">Section</p>
-                    <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupSec"></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Month Year Select -->
-        <div style="padding:14px 18px; border-bottom:1px solid #f1f5f9;">
-            <p style="font-size:13px; font-weight:600; color:#64748b; margin:0 0 10px 0;">Select month & year</p>
-            <div style="display:flex; gap:8px;">
-                <select id="popupMonth" style="flex:1; padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none;" onchange="loadFeeStatus()">
-                    <option value="">Month</option>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                </select>
-                <select id="popupYear" style="flex:1; padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none;" onchange="loadFeeStatus()">
-                    <option value="">Year</option>
-                    <?php
-                    $cy = date('Y');
-                    for($y = $cy; $y >= $cy - 5; $y--) {
-                        echo "<option value='$y'>$y</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-
-        <!-- Fee Status -->
-        <div id="feeStatusSection" style="display:none; padding:14px 18px; border-bottom:1px solid #f1f5f9;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <p style="font-size:13px; font-weight:600; color:#64748b; margin:0;" id="feeStatusLabel">Fee status</p>
-                <span id="feeBadge" style="font-size:12px; font-weight:600; padding:3px 12px; border-radius:20px;"></span>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <label id="paidLabel" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:12px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; transition:all 0.2s;">
-                    <input type="radio" name="feeStatus" id="paidRadio" value="paid" onchange="updateStatusUI()"> Paid
-                </label>
-                <label id="unpaidLabel" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:12px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; transition:all 0.2s;">
-                    <input type="radio" name="feeStatus" id="unpaidRadio" value="unpaid" onchange="updateStatusUI()"> Unpaid
-                </label>
-            </div>
-        </div>
-
-        <!-- Payment Method -->
-        <div id="paymentSection" style="display:none; padding:14px 18px; border-bottom:1px solid #f1f5f9;">
-            <p style="font-size:13px; font-weight:600; color:#64748b; margin:0 0 10px 0;">Payment Method</p>
-            <div style="display:flex; gap:8px; margin-bottom:12px;">
-                <label id="cashLbl" onclick="selectMethod('cash')"
-                    style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 8px; border-radius:8px; border:2px solid #1e293b; background:#1e293b; color:white; cursor:pointer; font-size:13px; font-weight:500;">
-                    💵 Cash
-                </label>
-                <label id="easypaisaLbl" onclick="selectMethod('easypaisa')"
-                    style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 8px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b; cursor:pointer; font-size:13px;">
-                    📱 EasyPaisa
-                </label>
-                <label id="cardLbl" onclick="selectMethod('card')"
-                    style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 8px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b; cursor:pointer; font-size:13px;">
-                    💳 Card
-                </label>
-            </div>
-
-            <!-- EasyPaisa Details -->
-            <div id="easypaisaDetails" style="display:none; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <input type="text" id="ep_transaction" placeholder="Transaction ID (e.g. EP-123456)"
-                        style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
-                    <input type="text" id="ep_sender" placeholder="Sender Number (e.g. 03001234567)"
-                        style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
-                    <input type="number" id="ep_amount" placeholder="Amount Paid"
-                        style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
-                </div>
-            </div>
-
-            <!-- Card Details -->
-            <div id="cardDetails" style="display:none; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <input type="text" id="card_transaction" placeholder="Transaction ID (e.g. TXN-987654)"
-                        style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
-                    <select id="card_type_select"
-                        style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
-                        <option value="">Select Card Type</option>
-                        <option value="visa">Visa</option>
-                        <option value="mastercard">Mastercard</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <input type="number" id="card_amount" placeholder="Amount Paid"
-                        style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
-                </div>
-            </div>
-        </div>
-
-        <!-- Save Button -->
-        <div id="saveSection" style="display:none; padding:14px 18px; gap:8px; flex-direction:row;">
-            <button onclick="saveFeeStatus()" id="saveBtn"
-                style="flex:1; padding:11px; background:#1e293b; color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">
-                Save Status
-            </button>
-            <button onclick="closePopup()"
-                style="padding:11px 18px; background:#f8fafc; color:#64748b; border:1px solid #e2e8f0; border-radius:8px; font-size:14px; cursor:pointer;">
-                Cancel
-            </button>
-        </div>
-
-        <!-- Save Message -->
-        <div id="saveMsg" style="display:none; margin:0 18px 14px; padding:10px 15px; border-radius:8px; font-size:14px; font-weight:600;"></div>
-
+        <button onclick="closePopup()" style="background:#e74c3c; color:white; border:none; border-radius:6px; padding:5px 12px; cursor:pointer; font-size:16px;">✕</button>
     </div>
+
+    <!-- Student Info -->
+    <div style="padding:16px 18px; border-bottom:1px solid #f1f5f9;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
+                <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase;">Student</p>
+                <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupName"></p>
+            </div>
+            <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
+                <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase;">Father</p>
+                <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupFather"></p>
+            </div>
+            <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
+                <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase;">Class</p>
+                <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupClass"></p>
+            </div>
+            <div style="background:#f8fafc; padding:10px 12px; border-radius:8px;">
+                <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase;">Monthly Fee</p>
+                <p style="font-size:14px; font-weight:600; color:#0f172a; margin:0;" id="popupFee"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Year -->
+    <div style="padding:14px 18px; border-bottom:1px solid #f1f5f9;">
+        <p style="font-size:12px; font-weight:600; color:#64748b; margin:0 0 8px 0; text-transform:uppercase;">Year</p>
+        <select id="popupYear" style="width:100%; padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:14px; outline:none;" onchange="loadFeeHistory(); updateTotalDue()">
+            <option value="">Select Year</option>
+            <?php
+            $cy = date('Y');
+            for($y = $cy; $y >= $cy - 5; $y--) {
+                echo "<option value='$y'" . ($y == $cy ? ' selected' : '') . ">$y</option>";
+            }
+            ?>
+        </select>
+    </div>
+
+    <!-- Month Selection -->
+    <div style="padding:14px 18px; border-bottom:1px solid #f1f5f9;">
+        <p style="font-size:12px; font-weight:600; color:#64748b; margin:0 0 10px 0; text-transform:uppercase;">Select Months</p>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;" id="monthGrid">
+            <?php
+            $monthList = ['Jan'=>1,'Feb'=>2,'Mar'=>3,'Apr'=>4,'May'=>5,'Jun'=>6,
+                          'Jul'=>7,'Aug'=>8,'Sep'=>9,'Oct'=>10,'Nov'=>11,'Dec'=>12];
+            foreach($monthList as $name => $num): ?>
+            <label id="mlabel_<?= $num ?>"
+                onclick="toggleMonth(<?= $num ?>, this)"
+                style="display:flex; align-items:center; justify-content:center; padding:8px 4px; border-radius:8px; border:0.5px solid #e2e8f0; background:#f8fafc; color:#64748b; cursor:pointer; font-size:12px; font-weight:500; transition:all 0.2s; user-select:none;">
+                <?= $name ?>
+            </label>
+            <?php endforeach; ?>
+        </div>
+        <p style="font-size:12px; color:#64748b; margin:8px 0 0 0;">Selected: <span id="selectedMonthsText">None</span></p>
+    </div>
+
+    <!-- Fee History -->
+    <div id="feeHistorySection" style="display:none; padding:14px 18px; border-bottom:1px solid #f1f5f9;">
+        <p style="font-size:12px; font-weight:600; color:#64748b; margin:0 0 10px 0; text-transform:uppercase;">
+            Fee History — <span id="historyYear"></span>
+        </p>
+        <div id="feeHistoryTable"></div>
+    </div>
+
+    <!-- Amount -->
+    <div style="padding:14px 18px; border-bottom:1px solid #f1f5f9;">
+        <p style="font-size:12px; font-weight:600; color:#64748b; margin:0 0 10px 0; text-transform:uppercase;">Amount</p>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <div style="flex:1; background:#f8fafc; padding:10px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+                <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase;">Total Due</p>
+                <p style="font-size:16px; font-weight:700; color:#0f172a; margin:0;" id="totalDue">Rs. 0</p>
+            </div>
+            <div style="flex:1;">
+                <p style="font-size:11px; color:#64748b; margin:0 0 3px 0; text-transform:uppercase;">Amount Paying</p>
+                <input type="number" id="amountPaying" placeholder="Enter amount"
+                    style="width:100%; padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:14px; outline:none;"
+                    oninput="updateRemaining()">
+            </div>
+        </div>
+        <div style="background:#f8fafc; padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+            <p style="font-size:13px; color:#64748b; margin:0;">Remaining after payment:</p>
+            <p style="font-size:14px; font-weight:700; margin:0;" id="remainingAmount">Rs. 0</p>
+        </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div style="padding:14px 18px; border-bottom:1px solid #f1f5f9;">
+        <p style="font-size:12px; font-weight:600; color:#64748b; margin:0 0 10px 0; text-transform:uppercase;">Payment Method</p>
+        <div style="display:flex; gap:8px; margin-bottom:10px;">
+            <label id="cashLbl" onclick="selectMethod('cash')"
+                style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:10px; border-radius:8px; border:2px solid #1e293b; background:#1e293b; color:white; cursor:pointer; font-size:13px; font-weight:500;">
+                💵 Cash
+            </label>
+            <label id="easypaisaLbl" onclick="selectMethod('easypaisa')"
+                style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:10px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b; cursor:pointer; font-size:13px;">
+                📱 EasyPaisa
+            </label>
+            <label id="cardLbl" onclick="selectMethod('card')"
+                style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:10px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b; cursor:pointer; font-size:13px;">
+                💳 Card
+            </label>
+        </div>
+
+        <!-- EasyPaisa Details -->
+        <div id="easypaisaDetails" style="display:none; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <input type="text" id="ep_transaction" placeholder="Transaction ID"
+                    style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
+                <input type="text" id="ep_sender" placeholder="Sender Number (03XXXXXXXXX)"
+                    style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
+            </div>
+        </div>
+
+        <!-- Card Details -->
+        <div id="cardDetails" style="display:none; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <input type="text" id="card_transaction" placeholder="Transaction ID"
+                    style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
+                <select id="card_type_select"
+                    style="padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; width:100%;">
+                    <option value="">Select Card Type</option>
+                    <option value="visa">Visa</option>
+                    <option value="mastercard">Mastercard</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    <div style="padding:14px 18px; border-bottom:1px solid #f1f5f9;">
+        <p style="font-size:12px; font-weight:600; color:#64748b; margin:0 0 8px 0; text-transform:uppercase;">Notes (Optional)</p>
+        <textarea id="paymentNotes" placeholder="Any additional notes..."
+            style="width:100%; padding:9px 12px; border-radius:8px; border:2px solid #e2e8f0; font-size:13px; outline:none; resize:none; height:70px;"></textarea>
+    </div>
+
+    <!-- Save Button -->
+    <div style="padding:14px 18px; display:flex; gap:8px;">
+        <button onclick="savePayment()" id="savePayBtn"
+            style="flex:1; padding:12px; background:#1e293b; color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">
+            💾 Save & Generate Receipt
+        </button>
+        <button onclick="closePopup()"
+            style="padding:12px 18px; background:#f8fafc; color:#64748b; border:1px solid #e2e8f0; border-radius:8px; font-size:14px; cursor:pointer;">
+            Cancel
+        </button>
+    </div>
+
+    <!-- Save Message -->
+    <div id="saveMsg" style="display:none; margin:0 18px 14px; padding:10px 15px; border-radius:8px; font-size:14px; font-weight:600;"></div>
+
+</div>
 </div>
 
-    <script>
-        window.addEventListener("pageshow", function(e) {
-            if (e.persisted) { window.location.reload(); }
+<script>
+let currentStudentId  = null;
+let currentStudentFee = 0;
+let selectedMonths    = [];
+let currentMethod     = 'cash';
+
+const monthNames = {
+    1:'January', 2:'February', 3:'March',    4:'April',
+    5:'May',     6:'June',     7:'July',      8:'August',
+    9:'September',10:'October',11:'November', 12:'December'
+};
+
+const monthShort = {
+    1:'Jan', 2:'Feb', 3:'Mar',  4:'Apr',
+    5:'May', 6:'Jun', 7:'Jul',  8:'Aug',
+    9:'Sep', 10:'Oct',11:'Nov', 12:'Dec'
+};
+
+// Search student
+function searchStudent(e) {
+    e.preventDefault();
+    let DAS = document.getElementById('searchDAS').value.trim();
+    if (!DAS) return;
+
+    fetch('<?= BASE_URL ?>search.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'DAS=' + encodeURIComponent(DAS)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) { alert(data.error); return; }
+
+        currentStudentId  = data.id;
+        currentStudentFee = parseFloat(data.T_Fee);
+
+        document.getElementById('popupDAS').innerText    = 'DAS: ' + data.DAS;
+        document.getElementById('popupName').innerText   = data.student_name;
+        document.getElementById('popupFather').innerText = data.father_name;
+        document.getElementById('popupClass').innerText  = (data.class_name ?? 'N/A') + ' - ' + (data.class_sec ?? '');
+        document.getElementById('popupFee').innerText    = 'Rs. ' + data.T_Fee + ' / month';
+
+        // Reset everything
+        selectedMonths = [];
+        document.querySelectorAll('[id^="mlabel_"]').forEach(lbl => {
+            lbl.style.background = '#f8fafc';
+            lbl.style.border     = '0.5px solid #e2e8f0';
+            lbl.style.color      = '#64748b';
         });
-    </script>
+        updateMonthUI();
+        document.getElementById('amountPaying').value        = '';
+        document.getElementById('totalDue').innerText        = 'Rs. 0';
+        document.getElementById('remainingAmount').innerText = 'Rs. 0';
+        document.getElementById('remainingAmount').style.color = '#64748b';
+        document.getElementById('paymentNotes').value        = '';
+        document.getElementById('saveMsg').style.display     = 'none';
+        document.getElementById('feeHistorySection').style.display = 'none';
+        selectMethod('cash');
 
-    <script>
-    let currentStudentId = null;
-    let currentMethod    = 'cash';
-    const monthNames     = ['','January','February','March','April','May','June',
-                            'July','August','September','October','November','December'];
+        document.getElementById('popupYear').value = '<?= date('Y') ?>';
+        loadFeeHistory();
 
-    // Search student
-    function searchStudent(e) {
-        e.preventDefault();
-        let DAS = document.getElementById('searchDAS').value.trim();
-        if (!DAS) return;
+        document.getElementById('searchOverlay').style.display = 'flex';
+    })
+    .catch(() => alert('Something went wrong!'));
+}
 
-        fetch('<?= BASE_URL ?>search.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'DAS=' + encodeURIComponent(DAS)
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.error) { alert(data.error); return; }
+function loadFeeHistory() {
+    let year = document.getElementById('popupYear').value;
+    if (!year || !currentStudentId) return;
 
-            currentStudentId = data.id;
+    document.getElementById('historyYear').innerText = year;
 
-            document.getElementById('popupDAS').innerText     = 'DAS: ' + data.DAS;
-            document.getElementById('popupName').innerText    = data.student_name;
-            document.getElementById('popupFather').innerText  = data.father_name;
-            document.getElementById('popupContact').innerText = data.contact_number;
-            document.getElementById('popupFee').innerText     = 'Rs. ' + data.T_Fee;
-            document.getElementById('popupClass').innerText   = data.class_name ?? 'N/A';
-            document.getElementById('popupSec').innerText     = data.class_sec  ?? 'N/A';
+    fetch('<?= BASE_URL ?>getfeehistory.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `student_id=${currentStudentId}&year=${year}`
+    })
+    .then(r => r.json())
+    .then(data => {
+        let section = document.getElementById('feeHistorySection');
+        let table   = document.getElementById('feeHistoryTable');
 
-            document.getElementById('popupMonth').value              = '';
-            document.getElementById('popupYear').value               = '';
-            document.getElementById('feeStatusSection').style.display = 'none';
-            document.getElementById('saveSection').style.display      = 'none';
-            document.getElementById('paymentSection').style.display   = 'none';
-            document.getElementById('saveMsg').style.display          = 'none';
+        if (data.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
 
-            document.getElementById('searchOverlay').style.display = 'flex';
-        })
-        .catch(() => alert('Something went wrong!'));
-    }
+        section.style.display = 'block';
 
-    // Load fee status
-    function loadFeeStatus() {
-        let month = document.getElementById('popupMonth').value;
-        let year  = document.getElementById('popupYear').value;
-        if (!month || !year || !currentStudentId) return;
+        let html = `<table style="width:100%; border-collapse:collapse; font-size:12px;">
+            <thead>
+                <tr style="background:#1e293b;">
+                    <th style="padding:8px 10px; color:white; text-align:left;">Month</th>
+                    <th style="padding:8px 10px; color:white; text-align:center;">Status</th>
+                    <th style="padding:8px 10px; color:white; text-align:right;">Paid</th>
+                    <th style="padding:8px 10px; color:white; text-align:right;">Remaining</th>
+                    <th style="padding:8px 10px; color:white; text-align:center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
-        document.getElementById('feeStatusLabel').innerText =
-            'Fee status for ' + monthNames[month] + ' ' + year;
+        data.forEach(row => {
+            let statusColor = row.status === 'paid'    ? '#d1fae5' :
+                              row.status === 'partial'  ? '#fef9c3' : '#fee2e2';
+            let textColor   = row.status === 'paid'    ? '#065f46' :
+                              row.status === 'partial'  ? '#854d0e' : '#991b1b';
+            let statusEmoji = row.status === 'paid'    ? '✅' :
+                              row.status === 'partial'  ? '⚠️' : '❌';
 
-        fetch('<?= BASE_URL ?>getfeestatus.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `student_id=${currentStudentId}&month=${month}&year=${year}`
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.status === 'paid') {
-                document.getElementById('paidRadio').checked = true;
-            } else {
-                document.getElementById('unpaidRadio').checked = true;
+            // Carried amount note
+            let carriedNote = '';
+            if (row.carried_amount > 0) {
+                carriedNote = `<br><span style="color:#854d0e; font-size:10px;">
+                    📌 Includes Rs.${parseFloat(row.carried_amount).toFixed(0)} from prev month
+                </span>`;
             }
 
-            currentMethod = data.payment_method || 'cash';
-            updateStatusUI();
+            // Action buttons
+            let actionBtns = '';
 
-            // Fill payment details
-            if (data.payment_method === 'easypaisa') {
-                document.getElementById('ep_transaction').value = data.transaction_id ?? '';
-                document.getElementById('ep_sender').value      = data.sender_number  ?? '';
-                document.getElementById('ep_amount').value      = data.amount_paid    ?? '';
-            } else if (data.payment_method === 'card') {
-                document.getElementById('card_transaction').value = data.transaction_id ?? '';
-                document.getElementById('card_type_select').value = data.card_type      ?? '';
-                document.getElementById('card_amount').value      = data.amount_paid    ?? '';
+            // Remaining hai aur carry forward nahi hua
+            if (row.remaining > 0 && row.carry_forward == 0) {
+                let nm = row.fee_month == 12 ? 1  : parseInt(row.fee_month) + 1;
+                let ny = row.fee_month == 12 ? parseInt(row.fee_year) + 1 : row.fee_year;
+                actionBtns += `
+                    <button onclick="carryForward(${row.fee_month}, ${row.fee_year}, ${nm}, ${ny})"
+                        style="padding:3px 7px; background:#fef9c3; color:#854d0e; 
+                               border:1px solid #fde68a; border-radius:5px; 
+                               font-size:10px; font-weight:600; cursor:pointer; 
+                               display:block; width:100%; margin-bottom:3px;">
+                        ➕ Add to ${monthShort[nm]}
+                    </button>`;
             }
 
-            document.getElementById('feeStatusSection').style.display = 'block';
-            document.getElementById('saveSection').style.display       = 'flex';
-            document.getElementById('saveMsg').style.display           = 'none';
+            // Carry forward hua tha — undo button
+            if (row.carry_forward == 1) {
+                actionBtns += `
+                    <button onclick="undoCarryForward(${row.fee_month}, ${row.fee_year})"
+                        style="padding:3px 7px; background:#fee2e2; color:#991b1b; 
+                               border:1px solid #fca5a5; border-radius:5px; 
+                               font-size:10px; font-weight:600; cursor:pointer;
+                               display:block; width:100%; margin-bottom:3px;">
+                        ↩️ Undo Forward
+                    </button>`;
+            }
+
+            // Mark unpaid button — agar paid ya partial hai
+            if (row.status === 'paid' || row.status === 'partial') {
+                actionBtns += `
+                    <button onclick="markUnpaid(${row.fee_month}, ${row.fee_year})"
+                        style="padding:3px 7px; background:#fee2e2; color:#991b1b; 
+                               border:1px solid #fca5a5; border-radius:5px; 
+                               font-size:10px; font-weight:600; cursor:pointer;
+                               display:block; width:100%;">
+                        ❌ Mark Unpaid
+                    </button>`;
+            }
+
+            // Carry forwarded badge
+            if (row.carry_forward == 1 && row.remaining == 0) {
+                actionBtns = `<span style="font-size:10px; color:#16a34a; font-weight:600;">✅ Forwarded</span>`;
+            }
+
+            html += `<tr style="border-bottom:0.5px solid #f1f5f9;">
+                <td style="padding:8px 10px; color:#0f172a;">
+                    ${monthNames[row.fee_month]}
+                    ${carriedNote}
+                </td>
+                <td style="padding:8px 10px; text-align:center;">
+                    <span style="font-size:10px; padding:2px 7px; border-radius:20px; 
+                        background:${statusColor}; color:${textColor}; font-weight:600;">
+                        ${statusEmoji} ${row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+                    </span>
+                </td>
+                <td style="padding:8px 10px; text-align:right; color:#16a34a; font-weight:600;">
+                    Rs. ${parseFloat(row.amount_paid).toFixed(0)}
+                </td>
+                <td style="padding:8px 10px; text-align:right; font-weight:600;
+                    color:${row.remaining > 0 ? '#dc2626' : '#16a34a'};">
+                    ${row.remaining > 0 ? 'Rs. ' + parseFloat(row.remaining).toFixed(0) : '-'}
+                </td>
+                <td style="padding:8px 10px; text-align:center; min-width:100px;">
+                    ${actionBtns}
+                </td>
+            </tr>`;
         });
-    }
 
-    // Update UI
-    function updateStatusUI() {
-        let isPaid     = document.getElementById('paidRadio').checked;
-        let paidLbl    = document.getElementById('paidLabel');
-        let unpaidLbl  = document.getElementById('unpaidLabel');
-        let badge      = document.getElementById('feeBadge');
-        let paySection = document.getElementById('paymentSection');
+        html += '</tbody></table>';
+        table.innerHTML = html;
+    });
+}
 
-        if (isPaid) {
-            paidLbl.style.background   = '#16a34a';
-            paidLbl.style.border       = '2px solid #16a34a';
-            paidLbl.style.color        = 'white';
-            unpaidLbl.style.background = '#f8fafc';
-            unpaidLbl.style.border     = '1px solid #e2e8f0';
-            unpaidLbl.style.color      = '#64748b';
-            badge.style.background     = '#16a34a';
-            badge.style.color          = 'white';
-            badge.innerText            = 'Paid';
-            paySection.style.display   = 'block';
-            selectMethod(currentMethod);
+// Carry forward
+function carryForward(month, year, nextMonth, nextYear) {
+    if (!confirm(`Add remaining to ${monthNames[nextMonth]} ${nextYear}?`)) return;
+
+    fetch('<?= BASE_URL ?>carryforward.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `student_id=${currentStudentId}&month=${month}&year=${year}&next_month=${nextMonth}&next_year=${nextYear}`
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert(`✅ Rs. ${data.amount} added to ${monthNames[data.next_month]} ${data.next_year}!`);
+            loadFeeHistory();
         } else {
-            unpaidLbl.style.background = '#dc2626';
-            unpaidLbl.style.border     = '2px solid #dc2626';
-            unpaidLbl.style.color      = 'white';
-            paidLbl.style.background   = '#f8fafc';
-            paidLbl.style.border       = '1px solid #e2e8f0';
-            paidLbl.style.color        = '#64748b';
-            badge.style.background     = '#dc2626';
-            badge.style.color          = 'white';
-            badge.innerText            = 'Unpaid';
-            paySection.style.display   = 'none';
+            alert('❌ ' + data.message);
         }
+    });
+}
+
+// Undo carry forward
+function undoCarryForward(month, year) {
+    if (!confirm('Undo carry forward?')) return;
+
+    fetch('<?= BASE_URL ?>carryforward.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `student_id=${currentStudentId}&month=${month}&year=${year}&action=undo`
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Carry forward undone!');
+            loadFeeHistory();
+        } else {
+            alert('❌ ' + data.message);
+        }
+    });
+}
+
+// Mark unpaid
+function markUnpaid(month, year) {
+    if (!confirm('Mark this month as unpaid?')) return;
+
+    fetch('<?= BASE_URL ?>updatefeestatus.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `month=${month}&year=${year}&status[${currentStudentId}]=unpaid`
+    })
+    .then(r => r.text())
+    .then(() => {
+        loadFeeHistory();
+    });
+}
+
+// Toggle month
+function toggleMonth(month, label) {
+    let idx = selectedMonths.indexOf(month);
+    if (idx === -1) {
+        selectedMonths.push(month);
+        label.style.background = '#1e293b';
+        label.style.border     = '2px solid #1e293b';
+        label.style.color      = 'white';
+    } else {
+        selectedMonths.splice(idx, 1);
+        label.style.background = '#f8fafc';
+        label.style.border     = '0.5px solid #e2e8f0';
+        label.style.color      = '#64748b';
+    }
+    updateMonthUI();
+    updateTotalDue();
+}
+
+// Update month UI
+function updateMonthUI() {
+    let text = selectedMonths.length > 0
+        ? selectedMonths.sort((a,b)=>a-b).map(m => monthShort[m]).join(', ')
+        : 'None';
+    document.getElementById('selectedMonthsText').innerText = text;
+}
+
+// Update total due
+function updateTotalDue() {
+    let year = document.getElementById('popupYear').value;
+    if (selectedMonths.length === 0 || !year || !currentStudentId) {
+        document.getElementById('totalDue').innerText = 'Rs. 0';
+        document.getElementById('amountPaying').value = '';
+        return;
     }
 
-    // Select payment method
-    function selectMethod(method) {
-        currentMethod = method;
-        let methods   = ['cash', 'easypaisa', 'card'];
-        methods.forEach(m => {
-            let lbl = document.getElementById(m + 'Lbl');
-            let det = document.getElementById(m + 'Details');
-            if (lbl) {
-                if (m === method) {
-                    lbl.style.background = '#1e293b';
-                    lbl.style.border     = '2px solid #1e293b';
-                    lbl.style.color      = 'white';
-                } else {
-                    lbl.style.background = '#f8fafc';
-                    lbl.style.border     = '1px solid #e2e8f0';
-                    lbl.style.color      = '#64748b';
-                }
+    // Server se actual due fetch karo
+    let body = `student_id=${currentStudentId}&year=${year}`;
+    selectedMonths.forEach(m => { body += `&months[]=${m}`; });
+
+    fetch('<?= BASE_URL ?>getcalcdue.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('totalDue').innerText = 'Rs. ' + data.total_due;
+        document.getElementById('amountPaying').value = data.total_due;
+        updateRemaining();
+
+        // Show breakdown agar carried amount hai
+        if (data.has_carried) {
+            document.getElementById('dueBreakdown').style.display = 'block';
+            document.getElementById('dueBreakdown').innerHTML = data.breakdown;
+        } else {
+            document.getElementById('dueBreakdown').style.display = 'none';
+        }
+    });
+}
+
+// Update remaining
+function updateRemaining(totalOverride) {
+    let totalText = document.getElementById('totalDue').innerText.replace('Rs. ', '');
+    let total     = totalOverride !== undefined ? totalOverride : (parseFloat(totalText) || 0);
+    let paying    = parseFloat(document.getElementById('amountPaying').value) || 0;
+    let remaining = total - paying;
+    let el        = document.getElementById('remainingAmount');
+    el.innerText   = 'Rs. ' + remaining.toFixed(0);
+    el.style.color = remaining > 0 ? '#dc2626' : '#16a34a';
+}
+
+// Select payment method
+function selectMethod(method) {
+    currentMethod = method;
+    ['cash', 'easypaisa', 'card'].forEach(m => {
+        let lbl = document.getElementById(m + 'Lbl');
+        let det = document.getElementById(m + 'Details');
+        if (lbl) {
+            if (m === method) {
+                lbl.style.background = '#1e293b';
+                lbl.style.border     = '2px solid #1e293b';
+                lbl.style.color      = 'white';
+            } else {
+                lbl.style.background = '#f8fafc';
+                lbl.style.border     = '1px solid #e2e8f0';
+                lbl.style.color      = '#64748b';
             }
-            if (det) {
-                det.style.display = (m === method && m !== 'cash') ? 'block' : 'none';
-            }
-        });
+        }
+        if (det) det.style.display = (m === method && m !== 'cash') ? 'block' : 'none';
+    });
+}
+
+// Save payment
+function savePayment() {
+    if (!currentStudentId)        { alert('No student selected!'); return; }
+    if (selectedMonths.length === 0) { alert('Please select at least one month!'); return; }
+
+    let amount = parseFloat(document.getElementById('amountPaying').value) || 0;
+    if (amount <= 0) { alert('Please enter amount!'); return; }
+
+    let year = document.getElementById('popupYear').value;
+    if (!year) { alert('Please select year!'); return; }
+
+    let btn       = document.getElementById('savePayBtn');
+    btn.disabled  = true;
+    btn.innerText = '⏳ Saving...';
+
+    let body = `student_id=${currentStudentId}&year=${year}&amount_paid=${amount}&payment_method=${currentMethod}&notes=${encodeURIComponent(document.getElementById('paymentNotes').value)}`;
+    selectedMonths.forEach(m => { body += `&months[]=${m}`; });
+
+    if (currentMethod === 'easypaisa') {
+        body += `&transaction_id=${encodeURIComponent(document.getElementById('ep_transaction').value)}`;
+        body += `&sender_number=${encodeURIComponent(document.getElementById('ep_sender').value)}`;
+    } else if (currentMethod === 'card') {
+        body += `&transaction_id=${encodeURIComponent(document.getElementById('card_transaction').value)}`;
+        body += `&card_type=${document.getElementById('card_type_select').value}`;
     }
 
-    // Save fee status
-    function saveFeeStatus() {
-        let month  = document.getElementById('popupMonth').value;
-        let year   = document.getElementById('popupYear').value;
-        let status = document.querySelector('input[name="feeStatus"]:checked').value;
-        let btn    = document.getElementById('saveBtn');
-
-        let paymentData = `payment_method=${currentMethod}`;
-
-        if (currentMethod === 'easypaisa') {
-            paymentData += `&transaction_id=${encodeURIComponent(document.getElementById('ep_transaction').value)}`;
-            paymentData += `&sender_number=${encodeURIComponent(document.getElementById('ep_sender').value)}`;
-            paymentData += `&amount_paid=${document.getElementById('ep_amount').value}`;
-        } else if (currentMethod === 'card') {
-            paymentData += `&transaction_id=${encodeURIComponent(document.getElementById('card_transaction').value)}`;
-            paymentData += `&card_type=${document.getElementById('card_type_select').value}`;
-            paymentData += `&amount_paid=${document.getElementById('card_amount').value}`;
-        }
-
-        btn.disabled  = true;
-        btn.innerText = 'Saving...';
-
-        fetch('<?= BASE_URL ?>updatefeestatus.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `month=${month}&year=${year}&status[${currentStudentId}]=${status}&${paymentData}`
-        })
-        .then(r => r.text())
-        .then(() => {
-            let msg          = document.getElementById('saveMsg');
-            msg.style.display    = 'block';
-            msg.style.background = '#d1fae5';
-            msg.style.color      = '#065f46';
-            msg.innerText        = '✅ Fee status saved successfully!';
-            btn.disabled         = false;
-            btn.innerText        = 'Save Status';
-            setTimeout(() => { msg.style.display = 'none'; }, 3000);
-        })
-        .catch(() => {
+    fetch('<?= BASE_URL ?>savepayment.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            closePopup();
+            // Receipt naye tab mein kholo
+            window.open(
+                '<?= BASE_URL ?>printreceipt.php?payment_id=' + data.payment_id,
+                '_blank',
+                'width=750,height=900,scrollbars=yes'
+            );
+        } else {
             let msg          = document.getElementById('saveMsg');
             msg.style.display    = 'block';
             msg.style.background = '#fee2e2';
             msg.style.color      = '#991b1b';
-            msg.innerText        = '❌ Something went wrong!';
-            btn.disabled         = false;
-            btn.innerText        = 'Save Status';
-        });
-    }
-
-    // Close popup
-    function closePopup() {
-        document.getElementById('searchOverlay').style.display = 'none';
-        document.getElementById('searchDAS').value             = '';
-    }
-
-    document.getElementById('searchOverlay').addEventListener('click', function(e) {
-        if (e.target === this) closePopup();
+            msg.innerText        = '❌ ' + data.message;
+        }
+        btn.disabled  = false;
+        btn.innerText = '💾 Save & Generate Receipt';
+    })
+    .catch(() => {
+        btn.disabled  = false;
+        btn.innerText = '💾 Save & Generate Receipt';
+        alert('Something went wrong!');
     });
-    </script>
+}
+
+// Close popup
+function closePopup() {
+    document.getElementById('searchOverlay').style.display = 'none';
+    document.getElementById('searchDAS').value             = '';
+}
+
+document.getElementById('searchOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closePopup();
+});
+
+window.addEventListener("pageshow", function(e) {
+    if (e.persisted) window.location.reload();
+});
+</script>
 
 </body>
 </html>
-```

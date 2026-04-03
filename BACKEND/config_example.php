@@ -3,6 +3,6 @@
 define('BASE_URL', '/feeproject/feemanagementsystem/BACKEND/');
 define('FRONTEND_URL', '/feeproject/feemanagementsystem/FRONTEND/');
 define('DB_HOST', 'localhost');
-define('DB_USER', 'your_username');
-define('DB_PASS', 'your_password');
+define('DB_USER', 'root');
+define('DB_PASS', '');
 define('DB_NAME', 'feemanagement');

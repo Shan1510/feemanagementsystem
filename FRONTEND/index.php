@@ -28,7 +28,7 @@ header("Expires: Thu, 01 Jan 1970 00:00:00 GMT");
     <div class="outerbox">
         <div class="inerbox">
             <h1>Login</h1>
-            <form action="../BACKEND/login.php" method="post" autocomplete="off">
+            <form action="/BACKEND/login.php" method="post" autocomplete="off">
                 <label for="Email">Email</label>
                 <input type="text" id="Email" name="Email" 
                        value="" placeholder="Enter your email" autocomplete="off">

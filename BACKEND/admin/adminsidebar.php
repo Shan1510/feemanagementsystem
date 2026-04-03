@@ -32,7 +32,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <a href="<?= BASE_URL ?>allstudents.php">📊 All Students</a>
             <a href="<?= BASE_URL ?>user.php">👥 Users</a>
             <a href="<?= BASE_URL ?>report.php">📊 Monthly Report</a>
-            <form action="<?= BASE_URL ?>Master/index.php" method="post">
+            <a href="<?= BASE_URL ?>promote.php">📊Promote</a>
+           <form action="<?= BASE_URL ?>Master/logout.php" method="post">
                 <button type="submit" style="width:100%;padding:10px;background:#e74c3c;color:white;border:none;border-radius:5px;cursor:pointer;font-size:15px;margin-top:10px;">🚪 Logout</button>
             </form>
         </nav>

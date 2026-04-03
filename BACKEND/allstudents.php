@@ -1,5 +1,5 @@
 <?php
-session_start();
+include __DIR__ . '/Master/admin_auth.php';
 include __DIR__.'/Master/conection.php';
 
 

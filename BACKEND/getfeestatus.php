@@ -11,31 +11,36 @@ if (!$student_id || !$month || !$year) {
     exit;
 }
 
-// Fee status fetch karo
-$stmt = $conn->prepare("SELECT id, status FROM student_fee WHERE student_id = ? AND fee_month = ? AND fee_year = ?");
+$stmt = $conn->prepare("SELECT status FROM student_fee WHERE student_id = ? AND fee_month = ? AND fee_year = ?");
 $stmt->bind_param("iii", $student_id, $month, $year);
 $stmt->execute();
 $fee = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$fee) {
-    echo json_encode(['status' => 'unpaid']);
-    exit;
+// Latest payment fetch karo from payments table
+$payment = null;
+if ($fee) {
+    $stmt = $conn->prepare("
+        SELECT p.payment_method, p.transaction_id, p.sender_number, p.card_type,
+               pm.amount_paid
+        FROM payments p
+        JOIN payment_months pm ON p.id = pm.payment_id
+        WHERE pm.student_id = ? AND pm.fee_month = ? AND pm.fee_year = ?
+        ORDER BY p.created_at DESC
+        LIMIT 1
+    ");
+    $stmt->bind_param("iii", $student_id, $month, $year);
+    $stmt->execute();
+    $payment = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 }
-
-// Payment details fetch karo
-$stmt = $conn->prepare("SELECT * FROM payment_details WHERE student_fee_id = ?");
-$stmt->bind_param("i", $fee['id']);
-$stmt->execute();
-$payment = $stmt->get_result()->fetch_assoc();
-$stmt->close();
 
 header('Content-Type: application/json');
 echo json_encode([
-    'status'         => $fee['status'],
-    'payment_method' => $payment['payment_method'] ?? 'cash',
-    'transaction_id' => $payment['transaction_id'] ?? '',
-    'sender_number'  => $payment['sender_number']  ?? '',
-    'card_type'      => $payment['card_type']       ?? '',
-    'amount_paid'    => $payment['amount_paid']     ?? ''
+    'status'         => $fee['status']              ?? 'unpaid',
+    'payment_method' => $payment['payment_method']  ?? 'cash',
+    'transaction_id' => $payment['transaction_id']  ?? '',
+    'sender_number'  => $payment['sender_number']   ?? '',
+    'card_type'      => $payment['card_type']        ?? '',
+    'amount_paid'    => $payment['amount_paid']      ?? ''
 ]);

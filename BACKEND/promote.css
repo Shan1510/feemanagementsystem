@@ -1,0 +1,184 @@
+/* ── Fonts: add to your <head> ──
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+*/
+body{
+    color: #0d0d0f;
+}
+/* Make grid use full available width */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* both columns share space equally */
+    gap: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;  /* ✅ add this */
+}
+
+/* Make cards stretch properly */
+.promo-card {
+    width: 100%;
+    box-sizing: border-box;
+    background: #141416;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid #1f1f24;
+    height: fit-content;
+    width: 100%;        /* ✅ add this */
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+}
+
+/* Make main content use full space */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    width: 100%;        /* ✅ add this */
+    min-width: 0;       /* ✅ prevents grid overflow */
+    box-sizing: border-box;
+}
+
+.promo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #e8d5b0, #c9a96e, #e8d5b0);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.promo-card:hover { border-color: #2e2e35; transform: translateY(-2px); }
+.promo-card:hover::before { opacity: 1; }
+
+.card-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    color: #c9a96e;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.card-desc {
+    font-size: 13px;
+    color: #6b6b78;
+    margin-bottom: 22px;
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    color: #5a5a66;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid #1f1f28;
+    background: #0d0d0f;
+    font-size: 14px;
+    color: #e8e4de;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5a66' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    border-color: #c9a96e;
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.08);
+}
+
+.form-group input::placeholder { color: #3a3a44; }
+
+.btn-promote {
+    width: 100%;
+    padding: 13px;
+    background: #c9a96e;
+    color: #0d0d0f;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-promote:hover {
+    background: #e8d5b0;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(201,169,110,0.25);
+}
+
+.btn-promote:disabled {
+    background: #1f1f28;
+    color: #3a3a44;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.msg {
+    display: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 12px;
+}
+
+.msg-success { background: #0d1f17; color: #6ee7b7; border: 1px solid #1a3d2b; }
+.msg-error   { background: #1f0d0d; color: #fca5a5; border: 1px solid #3d1a1a; }
+
+.student-preview {
+    display: none;
+    background: #0d0d0f;
+    border: 1px solid #1f1f28;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    position: relative;
+}
+
+.student-preview::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 14px; bottom: 14px;
+    width: 2px;
+    background: #c9a96e;
+    border-radius: 2px;
+}
+
+.preview-name   { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #f0ede8; margin: 0 0 5px 12px; }
+.preview-detail { font-size: 12px; color: #5a5a66; margin: 2px 0 0 12px; font-weight: 300; }
+
+@media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
