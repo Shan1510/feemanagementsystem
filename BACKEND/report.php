@@ -76,8 +76,8 @@ $monthNames = [
             cursor: pointer;
         }
 
-        .filter-group select:focus { 
-            border-color: #6366f1; 
+        .filter-group select:focus {
+            border-color: #6366f1;
         }
 
         .load-btn {
@@ -107,13 +107,8 @@ $monthNames = [
             transition: all 0.3s ease;
         }
 
-        .download-btn:hover { 
-            background: #15803d; 
-        }
-        
-        .load-btn:hover { 
-            background: #334155; 
-        }
+        .download-btn:hover { background: #15803d; }
+        .load-btn:hover     { background: #334155; }
 
         /* Class Pills */
         .classes-wrap {
@@ -173,10 +168,7 @@ $monthNames = [
             margin: 0;
         }
 
-        .badges { 
-            display: flex; 
-            gap: 8px; 
-        }
+        .badges { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .badge-paid {
             font-size: 12px;
@@ -184,6 +176,15 @@ $monthNames = [
             border-radius: 20px;
             background: #d1fae5;
             color: #065f46;
+            font-weight: 600;
+        }
+
+        .badge-partial {
+            font-size: 12px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            background: #fef9c3;
+            color: #854d0e;
             font-weight: 600;
         }
 
@@ -196,16 +197,13 @@ $monthNames = [
             font-weight: 600;
         }
 
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            min-width: 600px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
         }
 
-        thead tr { 
-            background: #1e293b; 
-        }
-        
+        thead tr     { background: #1e293b; }
         thead th {
             padding: 12px 14px;
             color: white;
@@ -214,20 +212,27 @@ $monthNames = [
             font-weight: 600;
         }
 
-        tbody tr { 
-            border-bottom: 1px solid #f1f5f9; 
-            transition: background 0.15s; 
+        tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
         }
-        
-        tbody tr:hover { 
-            background: #f8fafc; 
+
+        tbody tr:hover { background: #f8fafc; }
+
+        tbody td {
+            padding: 11px 14px;
+            font-size: 13px;
+            color: #334155;
         }
-        
-        tbody td { 
-            padding: 11px 14px; 
-            font-size: 13px; 
-            color: #334155; 
-        }
+
+        /* Row highlight by status */
+        tbody tr.row-paid    { background: #f0fdf4; }
+        tbody tr.row-partial { background: #fefce8; }
+        tbody tr.row-unpaid  { background: #fff5f5; }
+
+        tbody tr.row-paid:hover    { background: #dcfce7; }
+        tbody tr.row-partial:hover { background: #fef9c3; }
+        tbody tr.row-unpaid:hover  { background: #fee2e2; }
 
         .status-paid {
             display: inline-block;
@@ -235,6 +240,16 @@ $monthNames = [
             border-radius: 20px;
             background: #d1fae5;
             color: #065f46;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-partial {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: #fef9c3;
+            color: #854d0e;
             font-size: 12px;
             font-weight: 600;
         }
@@ -269,49 +284,25 @@ $monthNames = [
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .report-container {
-                padding: 0 15px;
-            }
-            
-            .filter-box {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filter-group select {
-                width: 100%;
-            }
-            
-            .download-btn {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .load-btn {
-                width: 100%;
-            }
-            
-            .table-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+            .report-container { padding: 0 15px; }
+
+            .filter-box { flex-direction: column; align-items: stretch; }
+
+            .filter-group select { width: 100%; }
+
+            .download-btn { margin-left: 0; width: 100%; }
+
+            .load-btn { width: 100%; }
+
+            .table-header { flex-direction: column; align-items: flex-start; }
         }
 
         @media (max-width: 480px) {
-            .classes-wrap {
-                justify-content: center;
-            }
-            
-            .class-pill {
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-            
-            thead th,
-            tbody td {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
+            .classes-wrap { justify-content: center; }
+
+            .class-pill { font-size: 12px; padding: 6px 12px; }
+
+            thead th, tbody td { padding: 8px 10px; font-size: 12px; }
         }
     </style>
 </head>
@@ -319,13 +310,13 @@ $monthNames = [
 
 <div class="dashboard-layout">
     <!-- Sidebar is included from adminsidebar.php -->
-    
+
     <div class="main-content">
         <div class="report-container">
             <div class="report-header">
                 <h2>📊 Monthly Fee Report</h2>
             </div>
-            
+
             <!-- Filter Box -->
             <div class="filter-box">
                 <div class="filter-group">
@@ -363,8 +354,9 @@ $monthNames = [
                 <div class="table-header">
                     <h3 id="tableTitle">-</h3>
                     <div class="badges">
-                        <span class="badge-paid" id="paidCount">Paid: 0</span>
-                        <span class="badge-unpaid" id="unpaidCount">Unpaid: 0</span>
+                        <span class="badge-paid"    id="paidCount">Paid: 0</span>
+                        <span class="badge-partial" id="partialCount">Partial: 0</span>
+                        <span class="badge-unpaid"  id="unpaidCount">Unpaid: 0</span>
                     </div>
                 </div>
                 <div id="tableBody">
@@ -378,11 +370,11 @@ $monthNames = [
 </div>
 
 <script>
-let selectedMonth   = '';
-let selectedYear    = '';
-let selectedClassId = '';
+let selectedMonth     = '';
+let selectedYear      = '';
+let selectedClassId   = '';
 let selectedClassName = '';
-let allClassData    = <?= json_encode($classArr) ?>;
+let allClassData      = <?= json_encode($classArr) ?>;
 
 const monthNames = {
     1:'January', 2:'February', 3:'March',    4:'April',
@@ -406,9 +398,9 @@ function loadClasses() {
 
     allClassData.forEach((cls, i) => {
         let pill = document.createElement('button');
-        pill.className   = 'class-pill' + (i === 0 ? ' active' : '');
-        pill.innerText   = cls.class_name + ' - ' + cls.class_sec;
-        pill.onclick     = function() {
+        pill.className = 'class-pill' + (i === 0 ? ' active' : '');
+        pill.innerText = cls.class_name + ' - ' + cls.class_sec;
+        pill.onclick = function() {
             document.querySelectorAll('.class-pill').forEach(p => p.classList.remove('active'));
             this.classList.add('active');
             loadClassData(cls.id, cls.class_name + ' - ' + cls.class_sec);
@@ -429,7 +421,7 @@ function loadClassData(classId, className) {
     selectedClassId   = classId;
     selectedClassName = className;
 
-    document.getElementById('tableTitle').innerText = className + ' | ' + monthNames[selectedMonth] + ' ' + selectedYear;
+    document.getElementById('tableTitle').innerText    = className + ' | ' + monthNames[selectedMonth] + ' ' + selectedYear;
     document.getElementById('tableWrap').style.display = 'block';
     document.getElementById('noData').style.display    = 'none';
     document.getElementById('tableBody').innerHTML     = '<div class="loading">⏳ Loading...</div>';
@@ -447,11 +439,13 @@ function loadClassData(classId, className) {
             return;
         }
 
-        let paid   = data.filter(s => s.status === 'paid').length;
-        let unpaid = data.filter(s => s.status === 'unpaid').length;
+        let paid    = data.filter(s => s.status === 'paid').length;
+        let partial = data.filter(s => s.status === 'partial').length;
+        let unpaid  = data.filter(s => s.status === 'unpaid').length;
 
-        document.getElementById('paidCount').innerText   = 'Paid: '   + paid;
-        document.getElementById('unpaidCount').innerText = 'Unpaid: ' + unpaid;
+        document.getElementById('paidCount').innerText    = 'Paid: '    + paid;
+        document.getElementById('partialCount').innerText = 'Partial: ' + partial;
+        document.getElementById('unpaidCount').innerText  = 'Unpaid: '  + unpaid;
 
         let html = `
         <table>
@@ -462,31 +456,46 @@ function loadClassData(classId, className) {
                     <th>Student Name</th>
                     <th>Father Name</th>
                     <th>Contact</th>
-                    <th>Fee</th>
+                    <th>Monthly Fee</th>
                     <th>Status</th>
+                    <th>Amount Paid</th>
+                    <th>Remaining</th>
                     <th>Method</th>
                 </tr>
             </thead>
             <tbody>`;
 
         data.forEach((s, i) => {
-            let statusBadge = s.status === 'paid'
-                ? '<span class="status-paid">Paid</span>'
-                : '<span class="status-unpaid">Unpaid</span>';
+            let statusBadge, rowClass;
+            if (s.status === 'paid') {
+                statusBadge = '<span class="status-paid">Paid</span>';
+                rowClass    = 'row-paid';
+            } else if (s.status === 'partial') {
+                statusBadge = '<span class="status-partial">Partial</span>';
+                rowClass    = 'row-partial';
+            } else {
+                statusBadge = '<span class="status-unpaid">Unpaid</span>';
+                rowClass    = 'row-unpaid';
+            }
 
             let method = s.payment_method
                 ? s.payment_method.charAt(0).toUpperCase() + s.payment_method.slice(1)
                 : '-';
 
+            let amountPaid = (s.status === 'unpaid') ? '0' : s.amount_paid;
+            let remaining  = (s.status === 'paid')   ? '0' : s.remaining;
+
             html += `
-            <tr>
-                <td>${i+1}</td>
+            <tr class="${rowClass}">
+                <td>${i + 1}</td>
                 <td>${s.DAS || '-'}</td>
                 <td>${s.student_name}</td>
                 <td>${s.father_name}</td>
                 <td>${s.contact_number}</td>
                 <td>Rs. ${s.T_Fee}</td>
                 <td>${statusBadge}</td>
+                <td>Rs. ${amountPaid}</td>
+                <td>${remaining > 0 ? 'Rs. ' + remaining : '-'}</td>
                 <td>${method}</td>
             </tr>`;
         });
@@ -505,7 +514,6 @@ function downloadExcel() {
         alert('Please select month and year first!');
         return;
     }
-
     window.location.href = '<?= BASE_URL ?>downloadreport.php?month=' + selectedMonth + '&year=' + selectedYear;
 }
 </script>

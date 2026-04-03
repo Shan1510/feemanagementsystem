@@ -13,6 +13,6 @@ if (
     $_SESSION['logged_in'] !== true ||
     $_SESSION['type'] !== 'admin'
 ) {
-     header("Location: " . FRONTEND_URL . "login.php");
+     header("Location: " . FRONTEND_URL . "index.php");
     exit();
 }

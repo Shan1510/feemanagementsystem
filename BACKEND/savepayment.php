@@ -149,23 +149,25 @@ foreach ($months as $month) {
     $stmt->close();
 
     // student_fee update
-    $check = $conn->prepare("SELECT id FROM student_fee WHERE student_id = ? AND fee_month = ? AND fee_year = ?");
-    $check->bind_param("iii", $student_id, $month, $year);
-    $check->execute();
-    $existing = $check->get_result()->fetch_assoc();
-    $check->close();
-
-    if ($existing) {
-        $upd = $conn->prepare("UPDATE student_fee SET status = ? WHERE id = ?");
-        $upd->bind_param("si", $month_status, $existing['id']);
-        $upd->execute();
-        $upd->close();
-    } else {
-        $ins = $conn->prepare("INSERT INTO student_fee (student_id, fee_month, fee_year, status) VALUES (?, ?, ?, ?)");
-        $ins->bind_param("iiis", $student_id, $month, $year, $month_status);
-        $ins->execute();
-        $ins->close();
-    }
+ // student_fee update section — NULL check add karo
+if ($existing) {
+    $upd = $conn->prepare("
+        UPDATE student_fee 
+        SET status = ?, paid_date = NOW()
+        WHERE id = ?
+    ");
+    $upd->bind_param("si", $month_status, $existing['id']);
+    $upd->execute();
+    $upd->close();
+} else {
+    $ins = $conn->prepare("
+        INSERT INTO student_fee 
+        (student_id, fee_month, fee_year, status, paid_date) 
+        VALUES (?, ?, ?, ?, NOW())
+    ");
+    $ins->bind_param("iiis", $student_id, $month, $year, $month_status);
+    $ins->execute();
+    $ins->close();
 }
 
 echo json_encode([
