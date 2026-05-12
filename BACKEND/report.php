@@ -25,7 +25,7 @@ $monthNames = [
     <style>
         /* Report Page Specific Styles */
         .report-container {
-            width: 1350px;
+            width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -357,6 +357,8 @@ $monthNames = [
                         <span class="badge-paid"    id="paidCount">Paid: 0</span>
                         <span class="badge-partial" id="partialCount">Partial: 0</span>
                         <span class="badge-unpaid"  id="unpaidCount">Unpaid: 0</span>
+                        <span id="collectedBadge" style="font-size:12px;padding:3px 12px;border-radius:20px;background:#dbeafe;color:#1e40af;font-weight:600;">Collected: Rs. 0</span>
+                        <span id="remainingBadge" style="font-size:12px;padding:3px 12px;border-radius:20px;background:#fee2e2;color:#991b1b;font-weight:600;">Remaining: Rs. 0</span>
                     </div>
                 </div>
                 <div id="tableBody">
@@ -433,19 +435,22 @@ function loadClassData(classId, className) {
     })
     .then(r => r.json())
     .then(data => {
-        if (data.length === 0) {
+        if (!data.students || data.students.length === 0) {
             document.getElementById('tableWrap').style.display = 'none';
             document.getElementById('noData').style.display    = 'block';
             return;
         }
 
-        let paid    = data.filter(s => s.status === 'paid').length;
-        let partial = data.filter(s => s.status === 'partial').length;
-        let unpaid  = data.filter(s => s.status === 'unpaid').length;
+        let students = data.students;
+        let paid    = students.filter(s => s.status === 'paid').length;
+        let partial = students.filter(s => s.status === 'partial').length;
+        let unpaid  = students.filter(s => s.status === 'unpaid').length;
 
-        document.getElementById('paidCount').innerText    = 'Paid: '    + paid;
-        document.getElementById('partialCount').innerText = 'Partial: ' + partial;
-        document.getElementById('unpaidCount').innerText  = 'Unpaid: '  + unpaid;
+        document.getElementById('paidCount').innerText      = 'Paid: '      + paid;
+        document.getElementById('partialCount').innerText   = 'Partial: '   + partial;
+        document.getElementById('unpaidCount').innerText    = 'Unpaid: '    + unpaid;
+        document.getElementById('collectedBadge').innerText = 'Collected: Rs. ' + Number(data.total_collected).toLocaleString();
+        document.getElementById('remainingBadge').innerText = 'Remaining: Rs. ' + Number(data.total_remaining).toLocaleString();
 
         let html = `
         <table>
@@ -465,7 +470,7 @@ function loadClassData(classId, className) {
             </thead>
             <tbody>`;
 
-        data.forEach((s, i) => {
+        students.forEach((s, i) => {
             let statusBadge, rowClass;
             if (s.status === 'paid') {
                 statusBadge = '<span class="status-paid">Paid</span>';
@@ -499,6 +504,17 @@ function loadClassData(classId, className) {
                 <td>${method}</td>
             </tr>`;
         });
+
+        // Class total row
+        html += `
+            <tr style="background:#1e293b; color:white; font-weight:bold;">
+                <td colspan="5">CLASS TOTAL</td>
+                <td>Rs. ${Number(data.total_fee).toLocaleString()}</td>
+                <td>—</td>
+                <td>Rs. ${Number(data.total_collected).toLocaleString()}</td>
+                <td>${data.total_remaining > 0 ? 'Rs. ' + Number(data.total_remaining).toLocaleString() : '-'}</td>
+                <td>—</td>
+            </tr>`;
 
         html += '</tbody></table>';
         document.getElementById('tableBody').innerHTML = html;

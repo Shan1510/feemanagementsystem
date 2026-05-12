@@ -1,5 +1,4 @@
 <?php
-
 include __DIR__ . '/Master/conection.php';
 include __DIR__ . '/Master/admin_auth.php';
 
@@ -23,6 +22,11 @@ header('Cache-Control: max-age=0');
 echo '<html><head><meta charset="UTF-8"></head><body>';
 echo '<h2>Fee Report - ' . $monthNames[$month] . ' ' . $year . '</h2><br>';
 
+$grand_total_fee       = 0;
+$grand_total_collected = 0;
+$grand_total_remaining = 0;
+$grand_total_students  = 0;
+
 while ($class = mysqli_fetch_assoc($classes)) {
     $class_id  = $class['id'];
     $className = $class['class_name'] . ' - ' . $class['class_sec'];
@@ -33,6 +37,7 @@ while ($class = mysqli_fetch_assoc($classes)) {
                MAX(p.payment_method) AS payment_method,
                MAX(p.transaction_id) AS transaction_id,
                COALESCE(SUM(pm.amount_paid), 0) AS amount_paid,
+               COALESCE(MAX(pm.remaining), 0) AS remaining,
                MAX(p.payment_date) AS payment_date
         FROM student s
         LEFT JOIN student_fee sf
@@ -54,17 +59,6 @@ while ($class = mysqli_fetch_assoc($classes)) {
     $result   = $stmt->get_result();
     $students = [];
     while ($row = $result->fetch_assoc()) {
-        // Calculate remaining dynamically from T_Fee and amount_paid
-        if ($row['status'] === 'paid') {
-            $row['amount_paid'] = $row['T_Fee'];
-            $row['remaining']   = 0;
-        } elseif ($row['status'] === 'partial') {
-            $row['remaining'] = $row['T_Fee'] - $row['amount_paid'];
-        } else {
-            // unpaid
-            $row['amount_paid'] = 0;
-            $row['remaining']   = $row['T_Fee'];
-        }
         $students[] = $row;
     }
     $stmt->close();
@@ -75,7 +69,21 @@ while ($class = mysqli_fetch_assoc($classes)) {
     $partial = count(array_filter($students, fn($s) => $s['status'] === 'partial'));
     $unpaid  = count($students) - $paid - $partial;
 
-    echo '<h3>' . htmlspecialchars($className) . ' | Paid: ' . $paid . ' | Partial: ' . $partial . ' | Unpaid: ' . $unpaid . '</h3>';
+    $class_collected = array_sum(array_column($students, 'amount_paid'));
+    $class_fee       = array_sum(array_column($students, 'T_Fee'));
+    $class_remaining = $class_fee - $class_collected;
+
+    $grand_total_fee       += $class_fee;
+    $grand_total_collected += $class_collected;
+    $grand_total_remaining += $class_remaining;
+    $grand_total_students  += count($students);
+
+    echo '<h3>' . htmlspecialchars($className) . 
+         ' &nbsp;|&nbsp; Students: ' . count($students) .
+         ' &nbsp;|&nbsp; Paid: ' . $paid . 
+         ' &nbsp;|&nbsp; Partial: ' . $partial . 
+         ' &nbsp;|&nbsp; Unpaid: ' . $unpaid . '</h3>';
+
     echo '<table border="1" cellpadding="5" cellspacing="0">
           <thead style="background:#1e293b; color:white;">
             <tr>
@@ -95,16 +103,9 @@ while ($class = mysqli_fetch_assoc($classes)) {
           </thead><tbody>';
 
     foreach ($students as $i => $s) {
-        if ($s['status'] === 'paid') {
-            $bg = '#d1fae5';
-        } elseif ($s['status'] === 'partial') {
-            $bg = '#fef9c3';
-        } else {
-            $bg = '#fee2e2';
-        }
-
-        $remaining  = ($s['status'] === 'paid') ? '-' : 'Rs. ' . $s['remaining'];
-        $amountPaid = ($s['status'] === 'unpaid') ? 'Rs. 0' : 'Rs. ' . $s['amount_paid'];
+        $bg = $s['status'] === 'paid' ? '#d1fae5' : ($s['status'] === 'partial' ? '#fef9c3' : '#fee2e2');
+        $amountPaid = ($s['status'] === 'unpaid') ? 'Rs. 0' : 'Rs. ' . number_format($s['amount_paid'], 0);
+        $remaining  = ($s['status'] === 'paid')   ? '-'     : 'Rs. ' . number_format($s['remaining'], 0);
 
         echo '<tr style="background:' . $bg . '">
                 <td>' . ($i + 1) . '</td>
@@ -112,7 +113,7 @@ while ($class = mysqli_fetch_assoc($classes)) {
                 <td>' . htmlspecialchars($s['student_name']) . '</td>
                 <td>' . htmlspecialchars($s['father_name']) . '</td>
                 <td>' . htmlspecialchars($s['contact_number']) . '</td>
-                <td>Rs. ' . $s['T_Fee'] . '</td>
+                <td>Rs. ' . number_format($s['T_Fee'], 0) . '</td>
                 <td>' . ucfirst($s['status']) . '</td>
                 <td>' . $amountPaid . '</td>
                 <td>' . $remaining . '</td>
@@ -122,8 +123,43 @@ while ($class = mysqli_fetch_assoc($classes)) {
               </tr>';
     }
 
+    // Class total row
+    echo '<tr style="background:#1e293b; color:white; font-weight:bold;">
+            <td colspan="5">CLASS TOTAL — ' . htmlspecialchars($className) . '</td>
+            <td>Rs. ' . number_format($class_fee, 0) . '</td>
+            <td>—</td>
+            <td>Rs. ' . number_format($class_collected, 0) . '</td>
+            <td>Rs. ' . number_format($class_remaining, 0) . '</td>
+            <td colspan="3">—</td>
+          </tr>';
+
     echo '</tbody></table><br><br>';
 }
 
+// Grand total summary table
+echo '<h2>📊 GRAND TOTAL SUMMARY — ' . $monthNames[$month] . ' ' . $year . '</h2>';
+echo '<table border="1" cellpadding="8" cellspacing="0" style="min-width:400px;">
+        <thead style="background:#0f172a; color:white;">
+          <tr><th>Description</th><th>Amount</th></tr>
+        </thead>
+        <tbody>
+          <tr style="background:#f0fdf4;">
+            <td><strong>Total Students</strong></td>
+            <td><strong>' . $grand_total_students . '</strong></td>
+          </tr>
+          <tr style="background:#f0fdf4;">
+            <td><strong>Total Fee Billed</strong></td>
+            <td><strong>Rs. ' . number_format($grand_total_fee, 0) . '</strong></td>
+          </tr>
+          <tr style="background:#d1fae5;">
+            <td><strong>✅ Total Collected</strong></td>
+            <td><strong>Rs. ' . number_format($grand_total_collected, 0) . '</strong></td>
+          </tr>
+          <tr style="background:#fee2e2;">
+            <td><strong>❌ Total Remaining</strong></td>
+            <td><strong>Rs. ' . number_format($grand_total_remaining, 0) . '</strong></td>
+          </tr>
+        </tbody>
+      </table>';
+
 echo '</body></html>';
-?>

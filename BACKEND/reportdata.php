@@ -9,7 +9,7 @@ $month    = intval($_POST['month']    ?? 0);
 $year     = intval($_POST['year']     ?? 0);
 
 if (!$class_id || !$month || !$year) {
-    echo json_encode([]);
+    echo json_encode(['students' => [], 'total_fee' => 0, 'total_collected' => 0, 'total_remaining' => 0, 'total_students' => 0]);
     exit;
 }
 
@@ -45,14 +45,33 @@ $stmt = $conn->prepare("
              s.contact_number, s.T_Fee, sf.status
     ORDER BY s.student_name
 ");
+
+if (!$stmt) {
+    echo json_encode(['error' => 'Query prepare failed: ' . $conn->error]);
+    exit;
+}
+
 $stmt->bind_param("iiiii", $month, $year, $month, $year, $class_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$students = [];
+$students        = [];
+$total_collected = 0;
+$total_remaining = 0;
+$total_fee       = 0;
+
 while ($row = $result->fetch_assoc()) {
-    $students[] = $row;
+    $total_fee       += floatval($row['T_Fee']);
+    $total_collected += floatval($row['amount_paid']);
+    $total_remaining += floatval($row['remaining']);
+    $students[]       = $row;
 }
 $stmt->close();
 
-echo json_encode($students);
+echo json_encode([
+    'students'        => $students,
+    'total_fee'       => $total_fee,
+    'total_collected' => $total_collected,
+    'total_remaining' => $total_remaining,
+    'total_students'  => count($students),
+]);

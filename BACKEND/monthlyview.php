@@ -20,22 +20,7 @@ while($c = $classRes->fetch_assoc()) $classes[] = $c['class_name'];
     <link href="admin/admin.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>monthlyview.css" rel="stylesheet">
     
-    <style>
-        .dashboard-layout {
-            display: flex !important;
-        }
-        .main-content {
-            flex: 1 !important;
-            min-width: 0 !important;
-            padding: 30px !important;
-            justify-content: flex-start !important;
-            align-items: stretch !important;
-        }
-        .filter-box, .table-wrap, #resultHeader {
-            width: 100% !important;
-            box-sizing: border-box !important;
-        }
-    </style>
+   
 
 </head>
 <body>

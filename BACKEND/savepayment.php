@@ -38,18 +38,16 @@ if (!$student) {
 
 $monthly_fee = floatval($student['T_Fee']);
 
-// ✅ Per month actual due calculate karo
-// (normal fee + any previous remaining)
-$month_dues  = [];
-$total_due   = 0;
+// Per month actual due calculate karo
+$month_dues = [];
+$total_due  = 0;
+
 foreach ($months as $m) {
     $m = intval($m);
 
-    // Check both real payments AND carry forward entries
     $stmt = $conn->prepare("
         SELECT 
             COALESCE(SUM(remaining), 0) as prev_remaining,
-            COALESCE(SUM(month_fee), 0) as total_due,
             COUNT(*) as has_record
         FROM payment_months 
         WHERE student_id = ? AND fee_month = ? AND fee_year = ?
@@ -59,11 +57,9 @@ foreach ($months as $m) {
     $row = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
-    if ($row['has_record'] > 0) {
-        // Remaining amount hi due hai
+    if ($row['has_record'] > 0 && $row['prev_remaining'] > 0) {
         $month_dues[$m] = floatval($row['prev_remaining']);
     } else {
-        // Normal full fee
         $month_dues[$m] = $monthly_fee;
     }
     $total_due += $month_dues[$m];
@@ -90,18 +86,9 @@ $stmt = $conn->prepare("
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 $stmt->bind_param("isdddsssssss",
-    $student_id,
-    $receipt_number,
-    $total_due,
-    $amount_paid,
-    $overall_remaining,
-    $payment_method,
-    $transaction_id,
-    $sender_number,
-    $card_type,
-    $payment_date,
-    $payment_time,
-    $notes
+    $student_id, $receipt_number, $total_due, $amount_paid, $overall_remaining,
+    $payment_method, $transaction_id, $sender_number, $card_type,
+    $payment_date, $payment_time, $notes
 );
 
 if (!$stmt->execute()) {
@@ -112,7 +99,7 @@ if (!$stmt->execute()) {
 $payment_id = $conn->insert_id;
 $stmt->close();
 
-// ✅ Amount distribute karo — month by month
+// Amount distribute month by month
 $remaining_to_distribute = $amount_paid;
 
 foreach ($months as $month) {
@@ -148,26 +135,30 @@ foreach ($months as $month) {
     $stmt->execute();
     $stmt->close();
 
-    // student_fee update
- // student_fee update section — NULL check add karo
-if ($existing) {
-    $upd = $conn->prepare("
-        UPDATE student_fee 
-        SET status = ?, paid_date = NOW()
-        WHERE id = ?
+    // ✅ student_fee check — $existing define karo pehle!
+    $check = $conn->prepare("
+        SELECT id FROM student_fee 
+        WHERE student_id = ? AND fee_month = ? AND fee_year = ?
     ");
-    $upd->bind_param("si", $month_status, $existing['id']);
-    $upd->execute();
-    $upd->close();
-} else {
-    $ins = $conn->prepare("
-        INSERT INTO student_fee 
-        (student_id, fee_month, fee_year, status, paid_date) 
-        VALUES (?, ?, ?, ?, NOW())
-    ");
-    $ins->bind_param("iiis", $student_id, $month, $year, $month_status);
-    $ins->execute();
-    $ins->close();
+    $check->bind_param("iii", $student_id, $month, $year);
+    $check->execute();
+    $existing = $check->get_result()->fetch_assoc();
+    $check->close();
+
+    if ($existing) {
+        $upd = $conn->prepare("UPDATE student_fee SET status = ? WHERE id = ?");
+        $upd->bind_param("si", $month_status, $existing['id']);
+        $upd->execute();
+        $upd->close();
+    } else {
+        $ins = $conn->prepare("
+            INSERT INTO student_fee (student_id, fee_month, fee_year, status) 
+            VALUES (?, ?, ?, ?)
+        ");
+        $ins->bind_param("iiis", $student_id, $month, $year, $month_status);
+        $ins->execute();
+        $ins->close();
+    }
 }
 
 echo json_encode([
