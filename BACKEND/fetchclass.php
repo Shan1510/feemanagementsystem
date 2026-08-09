@@ -26,7 +26,7 @@ if (isset($_GET['students'])) {
             ON sf.student_id = s.id 
             AND sf.fee_month = ? 
             AND sf.fee_year  = ?
-        WHERE s.class_id = ?
+        WHERE s.class_id = ? AND s.is_deleted = 0
         ORDER BY s.student_name
     ");
     $stmt->bind_param("iii", $month, $year, $class_id);

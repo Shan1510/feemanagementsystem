@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
     <?php endif; ?>
 
-    <a href="<?= BASE_URL ?>../FRONTEND/login.php" class="login-link">← Back to Login</a>
+    <a href="<?= BASE_URL ?>../FRONTEND/index.php" class="login-link">← Back to Login</a>
 </div>
 </body>
 </html>

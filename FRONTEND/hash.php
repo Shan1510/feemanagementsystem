@@ -1,3 +1,10 @@
 <?php
-echo password_hash('shan@1510', PASSWORD_BCRYPT);
+// Dev helper: generates a bcrypt hash for a password you pass in.
+// Usage: hash.php?password=YourPasswordHere
+$pwtxt = $_GET['password'] ?? '';
+if ($pwtxt !== '') {
+    echo password_hash($pwtxt, PASSWORD_BCRYPT);
+} else {
+    echo "Usage: hash.php?password=YourPasswordHere";
+}
 ?>

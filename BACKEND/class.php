@@ -55,18 +55,18 @@ if(mysqli_num_rows($result) > 0){
         echo "<td>". $row['T_Fee'] ."</td>";
         echo "<td>". $row['class_name'] ."</td>";
         echo "<td>". $row['Class_sec'] ."</td>";
-echo "<td>"
-        <label>
-            <input type='radio' name='status_{$row['id']}' value='paid'> ;
-        </label>
-        <label>
-            <input type='radio' name='status_{$row['id']}' value='unpaid'> ;
-        </label> 
-
+        echo "<td>
+                <label>
+                    <input type='radio' name='status_{$row['id']}' value='paid'>
+                </label>
+                <label>
+                    <input type='radio' name='status_{$row['id']}' value='unpaid'>
+                </label>
+              </td>";
         echo "<td>
                 <a href='edit.php?id=".$row['id']."'>Edit</a> |
                 <a href='delete.php?id=".$row['id']."'>Delete</a>
-              "</td>";
+              </td>";
         echo "</tr>";
     }
 } else {

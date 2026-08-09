@@ -55,85 +55,99 @@ $class_result = mysqli_query($conn, "SELECT * FROM class ORDER BY class_name, cl
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Student</title>
+    <link href="admin/admin.css" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
-        body { background:#f5f5f5; padding:20px; }
-        .container { max-width:600px; margin:0 auto; background:white; padding:30px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
-        h2 { color:#333; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid #4CAF50; }
-        .message { padding:15px; margin-bottom:20px; border-radius:5px; font-weight:bold; }
-        .success { background:#d4edda; color:#155724; }
-        .error   { background:#f8d7da; color:#721c24; }
-        .form-group { margin-bottom:20px; }
-        label { display:block; margin-bottom:8px; font-weight:bold; color:#555; }
-        input[type="text"], input[type="number"], select { width:100%; padding:12px; border:1px solid #ddd; border-radius:5px; font-size:16px; }
-        .button-group { display:flex; gap:15px; margin-top:30px; }
-        .btn { padding:12px 25px; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:bold; flex:1; text-align:center; text-decoration:none; }
-        .btn-update { background:#142a53; color:white; }
-        .btn-cancel { background:#6c757d; color:white; }
-        .student-info { background:#f8f9fa; padding:15px; border-radius:5px; margin-bottom:20px; border-left:4px solid #23086e; }
-        .student-info p { margin:5px 0; color:#555; }
+        .card { max-width: 640px; margin: 0 auto; }
+        .edit-info {
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #475569;
+            display: flex;
+            gap: 22px;
+            flex-wrap: wrap;
+        }
+        .edit-info strong { color: var(--dark); }
+        .button-group { display: flex; gap: 12px; margin-top: 8px; }
+        .button-group .btn { flex: 1; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Edit Student</h2>
-    <?php if ($message): ?>
-        <div class="message <?= $message_type ?>"><?= htmlspecialchars($message) ?></div>
-    <?php endif; ?>
-    <div class="student-info">
-        <p><strong>Student ID:</strong> <?= $student['id'] ?></p>
-        <p><strong>Current Class:</strong> <?= htmlspecialchars($student['class_name'] . ' - ' . $student['class_sec']) ?></p>
-    </div>
-    <form method="POST">
-        <div class="form-group">
-            <label>DAS Number:</label>
-            <input type="text" name="das" value="<?= htmlspecialchars($student['DAS']) ?>" required>
+<div class="dashboard-layout">
+    <?php include __DIR__ . '/admin/adminsidebar.php'; ?>
+
+    <main class="main-content">
+        <div class="page-container">
+            <div class="page-header">
+                <div>
+                    <h1>✏️ Edit Student</h1>
+                    <p>Update student details</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <?php if ($message): ?>
+                    <div class="alert <?= $message_type === 'success' ? 'alert-success' : 'alert-danger' ?>">
+                        <?= htmlspecialchars($message) ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="edit-info">
+                    <span><strong>Student ID:</strong> <?= $student['id'] ?></span>
+                    <span><strong>Current Class:</strong> <?= htmlspecialchars($student['class_name'] . ' - ' . $student['class_sec']) ?></span>
+                </div>
+
+                <form method="POST">
+                    <div class="form-field">
+                        <label for="das">DAS Number</label>
+                        <input type="text" id="das" name="das" value="<?= htmlspecialchars($student['DAS']) ?>" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="student_name">Student Name</label>
+                            <input type="text" id="student_name" name="student_name" value="<?= htmlspecialchars($student['student_name']) ?>" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="father_name">Father Name</label>
+                            <input type="text" id="father_name" name="father_name" value="<?= htmlspecialchars($student['father_name']) ?>" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="contact_number">Contact Number</label>
+                            <input type="text" id="contact_number" name="contact_number" value="<?= htmlspecialchars($student['contact_number']) ?>" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="t_fee">Total Fee</label>
+                            <input type="number" id="t_fee" name="t_fee" value="<?= htmlspecialchars($student['T_Fee']) ?>" required step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="class_id">Class &amp; Section</label>
+                        <select name="class_id" id="class_id" required>
+                            <option value="">Select Class &amp; Section</option>
+                            <?php while($class = mysqli_fetch_assoc($class_result)): ?>
+                                <option value="<?= $class['id'] ?>" <?= ($class['id'] == $student['class_id']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($class['class_name'] . ' - Section ' . $class['class_sec']) ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">💾 Update Student</button>
+                        <a href="allstudents.php" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Student Name:</label>
-            <input type="text" name="student_name" value="<?= htmlspecialchars($student['student_name']) ?>" required>
-        </div>
-        <div class="form-group">
-            <label>Father Name:</label>
-            <input type="text" name="father_name" value="<?= htmlspecialchars($student['father_name']) ?>" required>
-        </div>
-        <div class="form-group">
-            <label>Contact Number:</label>
-            <input type="text" name="contact_number" value="<?= htmlspecialchars($student['contact_number']) ?>" required>
-        </div>
-        <div class="form-group">
-            <label>Total Fee:</label>
-            <input type="number" name="t_fee" value="<?= htmlspecialchars($student['T_Fee']) ?>" required step="0.01">
-        </div>
-        <div class="form-group">
-            <label>Class & Section:</label>
-            <select name="class_id" required>
-                <option value="">Select Class & Section</option>
-                <?php while($class = mysqli_fetch_assoc($class_result)): ?>
-                    <option value="<?= $class['id'] ?>" <?= ($class['id'] == $student['class_id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($class['class_name'] . ' - Section ' . $class['class_sec']) ?>
-                    </option>
-                <?php endwhile; ?>
-            </select>
-        </div>
-        <div class="button-group">
-            <button type="submit" class="btn btn-update">Update Student</button>
-            <a href="javascript:history.back()" class="btn btn-cancel">Cancel</a>
-        </div>
-    </form>
+    </main>
 </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
 
 <?php
 /*

@@ -4,10 +4,18 @@ include __DIR__ . '/Master/admin_auth.php';
 
 
 header('Content-Type: application/json');
-// File ke top pe add karo — action check
-$action = $_POST['action'] ?? 'forward';
+// File ke top pe action + common params load karo
+$action     = $_POST['action'] ?? 'forward';
+$student_id = intval($_POST['student_id'] ?? 0);
+$month      = intval($_POST['month']      ?? 0);
+$year       = intval($_POST['year']       ?? 0);
 
 if ($action === 'undo') {
+    if (!$student_id || !$month || !$year) {
+        echo json_encode(['success' => false, 'message' => 'Invalid data']);
+        exit;
+    }
+
     // Carry forward undo karo
     $stmt = $conn->prepare("
         UPDATE payment_months 
@@ -34,9 +42,6 @@ if ($action === 'undo') {
     exit;
 }
 
-$student_id = intval($_POST['student_id'] ?? 0);
-$month      = intval($_POST['month']      ?? 0);
-$year       = intval($_POST['year']       ?? 0);
 $next_month = intval($_POST['next_month'] ?? 0);
 $next_year  = intval($_POST['next_year']  ?? 0);
 

@@ -31,8 +31,7 @@ include 'Master/conection.php';
         <select name="year" required>
             <option value="" selected>Select Year</option>
             <?php 
-            $currentYear = date('Y');
-            for($y = $currentYear; $y <= $currentYear + 5; $y++){ 
+            for($y = YEAR_START; $y <= YEAR_NOW; $y++){ 
                 echo "<option value='$y'>$y</option>"; 
             } 
             ?>

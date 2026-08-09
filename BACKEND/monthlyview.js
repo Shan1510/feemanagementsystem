@@ -70,20 +70,27 @@ function fetchStudents() {
         document.getElementById('unpaidCount').innerText = 'Unpaid: ' + unpaid;
 
         let html = `<table><thead><tr>
-            <th>#</th><th>DAS</th><th>Student Name</th>
+            <th>#</th><th>DAS</th><th>Student</th>
             <th>Father Name</th><th>Contact</th><th>Total Fee</th><th>Fee Status</th>
         </tr></thead><tbody>`;
 
         students.forEach((s, i) => {
             let pc = s.status === 'paid'   ? 'checked' : '';
             let uc = s.status === 'unpaid' ? 'checked' : '';
+
+            let parts = (s.student_name || '?').trim().split(/\s+/);
+            let initials = ((parts[0] || '?')[0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+
             html += `<tr>
                 <td>${i+1}</td>
-                <td>${s.DAS}</td>
-                <td>${s.student_name}</td>
+                <td><span class="cell-strong">${s.DAS}</span></td>
+                <td>
+                    <span class="avatar-inline">${initials}</span>
+                    <span class="cell-strong">${s.student_name}</span>
+                </td>
                 <td>${s.father_name}</td>
                 <td>${s.contact_number}</td>
-                <td>Rs. ${s.T_Fee}</td>
+                <td><span class="cell-strong">Rs. ${s.T_Fee}</span></td>
                 <td>
                     <div class="status-toggle">
                         <input type="radio" class="paid-radio"

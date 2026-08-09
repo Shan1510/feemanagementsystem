@@ -34,31 +34,62 @@ $breakdown   = '';
 foreach ($months as $m) {
     $m = intval($m);
 
+    // Latest outstanding balance for this month.
+    // A fully paid month (latest remaining = 0) must NOT be charged again.
     $stmt = $conn->prepare("
-        SELECT 
-            COALESCE(SUM(remaining), 0)  as prev_remaining,
-            COALESCE(SUM(month_fee), 0)  as month_fee_total,
-            COUNT(*) as has_record
+        SELECT payment_id, remaining
         FROM payment_months 
         WHERE student_id = ? AND fee_month = ? AND fee_year = ?
+        ORDER BY id DESC
+        LIMIT 1
     ");
     $stmt->bind_param("iii", $student_id, $m, $year);
     $stmt->execute();
-    $row = $stmt->get_result()->fetch_assoc();
+    $pm = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
-    if ($row['has_record'] > 0 && $row['prev_remaining'] > 0) {
-        $due          = floatval($row['prev_remaining']);
-        $carried      = $due - $monthly_fee;
-        $has_carried  = true;
-        $breakdown   .= "<div style='font-size:12px; color:#854d0e; margin-bottom:4px;'>
-            ⚠️ {$monthNames[$m]}: Rs. {$monthly_fee} + Rs. {$carried} carried = <b>Rs. {$due}</b>
-        </div>";
+    if ($pm) {
+        $due = max(0, floatval($pm['remaining']));
+
+        if ($due > 0 && intval($pm['payment_id']) === 0) {
+            $carried      = max(0, $due - $monthly_fee);
+            $has_carried  = true;
+            $breakdown   .= "<div style='font-size:12px; color:#854d0e; margin-bottom:4px;'>
+                ⚠️ {$monthNames[$m]}: Rs. {$monthly_fee} + Rs. {$carried} carried = <b>Rs. {$due}</b>
+            </div>";
+        } elseif ($due > 0) {
+            $breakdown   .= "<div style='font-size:12px; color:#64748b; margin-bottom:4px;'>
+                {$monthNames[$m]}: Rs. {$due}
+            </div>";
+        } else {
+            $breakdown   .= "<div style='font-size:12px; color:#16a34a; margin-bottom:4px;'>
+                {$monthNames[$m]}: Paid - Rs. 0 due
+            </div>";
+        }
     } else {
-        $due          = $monthly_fee;
-        $breakdown   .= "<div style='font-size:12px; color:#64748b; margin-bottom:4px;'>
-            {$monthNames[$m]}: Rs. {$due}
-        </div>";
+        // No payment recorded yet — check if the month was already
+        // marked paid via the monthly fee-status toggle.
+        $stmt = $conn->prepare("
+            SELECT status FROM student_fee
+            WHERE student_id = ? AND fee_month = ? AND fee_year = ?
+            LIMIT 1
+        ");
+        $stmt->bind_param("iii", $student_id, $m, $year);
+        $stmt->execute();
+        $sf = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        if ($sf && strtolower($sf['status']) === 'paid') {
+            $due = 0;
+            $breakdown .= "<div style='font-size:12px; color:#16a34a; margin-bottom:4px;'>
+                {$monthNames[$m]}: Paid - Rs. 0 due
+            </div>";
+        } else {
+            $due          = $monthly_fee;
+            $breakdown   .= "<div style='font-size:12px; color:#64748b; margin-bottom:4px;'>
+                {$monthNames[$m]}: Rs. {$due}
+            </div>";
+        }
     }
     $total_due += $due;
 }

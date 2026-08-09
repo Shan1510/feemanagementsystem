@@ -1,6 +1,7 @@
 <?php
 session_start();
 include __DIR__ .'/Master/conection.php';
+include __DIR__ .'/Master/admin_auth.php';
 
 if (!isset($_GET['id'])) {
     die("Invalid request");

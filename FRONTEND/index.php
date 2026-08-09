@@ -40,7 +40,7 @@ header("Expires: Thu, 01 Jan 1970 00:00:00 GMT");
                 <br><br>
                 <input type="submit" value="Login">
             </form>
-            <a href="signup.html">signup</a>
+            <a href="signup.php">Sign up</a>
         </div>
     </div>
     <script>
@@ -49,9 +49,7 @@ header("Expires: Thu, 01 Jan 1970 00:00:00 GMT");
         document.getElementById('Email').value = '';
         document.getElementById('password').value = '';
     }
-</script>
-
-Clear data
+    </script>
 </body>
 </html>
 

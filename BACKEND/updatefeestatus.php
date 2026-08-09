@@ -1,6 +1,6 @@
 <?php
 include __DIR__ . '/Master/conection.php';
-include __DIR__ . '/Master/admin_auth.php';
+include __DIR__ . '/Master/any_auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: admin/admindashboard.php");

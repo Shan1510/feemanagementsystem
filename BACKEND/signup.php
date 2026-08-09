@@ -2,7 +2,7 @@
 include __DIR__ . '/Master/conection.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../FRONTEND/signup.html");
+    header("Location: ../FRONTEND/index.php");
     exit;
 }
 
@@ -40,10 +40,10 @@ $stmt = $conn->prepare("INSERT INTO signup (username, email, Phonenumber, Passwo
 $stmt->bind_param("ssss", $u_name, $Email, $p_num, $hashed);
 
 try {
-    $stmt->execute();
-    $stmt->close();
-    header("Location: ../FRONTEND/login.html");
-    exit;
+        $stmt->execute();
+        $stmt->close();
+        header("Location: ../FRONTEND/index.php");
+        exit;
 } catch (mysqli_sql_exception $e) {
     if ($e->getCode() == 1062) {
         echo "Email already exists! Please use another email.";

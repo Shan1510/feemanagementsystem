@@ -40,6 +40,6 @@ $stmt->close();
 echo json_encode([
     'success'        => true,
     'payment_id'     => $payment_id,
-    'receipt_number' => $receipt_number,
+    'receipt_number' => $payment['receipt_number'] ?? '',
     'receipt_url'    => BASE_URL . 'printreceipt.php?payment_id=' . $payment_id
 ]);

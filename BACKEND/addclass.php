@@ -2,8 +2,10 @@
 include __DIR__ . '/Master/conection.php';
 include __DIR__ . '/Master/admin_auth.php';
 
+header('Content-Type: application/json');
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: " . FRONTEND_URL . "addclass.html");
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
     exit;
 }
 
@@ -11,7 +13,7 @@ $classname = trim($_POST['class_name'] ?? '');
 $classsec  = trim($_POST['class_sec']  ?? '') ?: null; // NULL if empty
 
 if (!$classname) {
-    echo "Class name is required.";
+    echo json_encode(['success' => false, 'message' => 'Class name is required.']);
     exit;
 }
 
@@ -29,7 +31,7 @@ if ($classsec) {
 }
 $check->execute();
 if ($check->get_result()->num_rows > 0) {
-    echo "Class already exists!";
+    echo json_encode(['success' => false, 'message' => 'Class already exists!']);
     exit;
 }
 
@@ -39,10 +41,9 @@ $stmt->bind_param("ss", $classname, $classsec);
 try {
     $stmt->execute();
     $stmt->close();
-    header("Location: " . BASE_URL . "admin/admindashboard.php");
-    exit;
+    echo json_encode(['success' => true, 'message' => 'Class added successfully!']);
 } catch (mysqli_sql_exception $e) {
-    echo "Error adding class. Please try again.";
+    echo json_encode(['success' => false, 'message' => 'Error adding class. Please try again.']);
 }
 ?>
 

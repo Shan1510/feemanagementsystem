@@ -45,22 +45,40 @@ $total_due  = 0;
 foreach ($months as $m) {
     $m = intval($m);
 
+    // Latest outstanding balance for this month.
+    // A fully paid month (latest remaining = 0) must NOT be charged again.
     $stmt = $conn->prepare("
-        SELECT 
-            COALESCE(SUM(remaining), 0) as prev_remaining,
-            COUNT(*) as has_record
+        SELECT remaining
         FROM payment_months 
         WHERE student_id = ? AND fee_month = ? AND fee_year = ?
+        ORDER BY id DESC
+        LIMIT 1
     ");
     $stmt->bind_param("iii", $student_id, $m, $year);
     $stmt->execute();
-    $row = $stmt->get_result()->fetch_assoc();
+    $pm = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
-    if ($row['has_record'] > 0 && $row['prev_remaining'] > 0) {
-        $month_dues[$m] = floatval($row['prev_remaining']);
+    if ($pm) {
+        $month_dues[$m] = max(0, floatval($pm['remaining']));
     } else {
-        $month_dues[$m] = $monthly_fee;
+        // No payment recorded yet — check if the month was already
+        // marked paid via the monthly fee-status toggle.
+        $stmt = $conn->prepare("
+            SELECT status FROM student_fee
+            WHERE student_id = ? AND fee_month = ? AND fee_year = ?
+            LIMIT 1
+        ");
+        $stmt->bind_param("iii", $student_id, $m, $year);
+        $stmt->execute();
+        $sf = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        if ($sf && strtolower($sf['status']) === 'paid') {
+            $month_dues[$m] = 0;
+        } else {
+            $month_dues[$m] = $monthly_fee;
+        }
     }
     $total_due += $month_dues[$m];
 }
@@ -72,7 +90,7 @@ $stmt = $conn->prepare("SELECT COUNT(*) as total FROM payments");
 $stmt->execute();
 $count          = $stmt->get_result()->fetch_assoc()['total'];
 $stmt->close();
-$receipt_number = 'RCP-' . date('Y') . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+$receipt_number = 'RCP-' . YEAR_NOW . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
 
 $payment_date = date('Y-m-d');
 $payment_time = date('H:i:s');

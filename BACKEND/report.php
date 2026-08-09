@@ -1,7 +1,6 @@
 <?php
 include __DIR__ . '/Master/conection.php';
 include __DIR__ . '/Master/admin_auth.php';
-include __DIR__ . '/admin/adminsidebar.php';
 
 // All classes fetch karo
 $allClasses = mysqli_query($conn, "SELECT * FROM class ORDER BY class_name, class_sec");
@@ -22,6 +21,7 @@ $monthNames = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly Fee Report</title>
+    <link href="<?= BASE_URL ?>admin/admin.css" rel="stylesheet">
     <style>
         /* Report Page Specific Styles */
         .report-container {
@@ -30,10 +30,17 @@ $monthNames = [
             padding: 0 20px;
         }
 
-        .report-header h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .report-header h1 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
             color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .report-header p {
+            color: #64748b;
+            font-size: 0.95rem;
             margin-bottom: 25px;
         }
 
@@ -309,12 +316,13 @@ $monthNames = [
 <body>
 
 <div class="dashboard-layout">
-    <!-- Sidebar is included from adminsidebar.php -->
+    <?php include __DIR__ . '/admin/adminsidebar.php'; ?>
 
     <div class="main-content">
-        <div class="report-container">
+        <div class="page-container">
             <div class="report-header">
-                <h2>📊 Monthly Fee Report</h2>
+                <h1>📊 Monthly Fee Report</h1>
+                <p>Review collection and payment status by class</p>
             </div>
 
             <!-- Filter Box -->
@@ -333,8 +341,7 @@ $monthNames = [
                     <select id="f-year">
                         <option value="">Select Year</option>
                         <?php
-                        $cy = date('Y');
-                        for($y = $cy; $y >= $cy - 5; $y--) {
+                        for($y = YEAR_START; $y <= YEAR_NOW; $y++) {
                             echo "<option value='$y'>$y</option>";
                         }
                         ?>

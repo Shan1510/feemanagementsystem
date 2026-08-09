@@ -1,6 +1,6 @@
 <?php
 include __DIR__ . '/Master/conection.php';
-include __DIR__ . '/Master/admin_auth.php';
+include __DIR__ . '/Master/any_auth.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,7 +60,7 @@ include __DIR__ . '/Master/admin_auth.php';
 
         .search-btn {
             padding: 10px 25px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             border: none;
             border-radius: 8px;
@@ -180,7 +180,7 @@ include __DIR__ . '/Master/admin_auth.php';
 
         .save-btn {
             padding: 12px 30px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             border: none;
             border-radius: 8px;
@@ -264,8 +264,7 @@ include __DIR__ . '/Master/admin_auth.php';
         <select id="f-year">
             <option value="">Select Year</option>
             <?php
-            $currentYear = date('Y');
-            for($y = $currentYear; $y >= $currentYear - 5; $y--) {
+            for($y = YEAR_START; $y <= YEAR_NOW; $y++) {
                 echo "<option value='$y'>$y</option>";
             }
             ?>
